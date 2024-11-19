@@ -4,7 +4,7 @@ import ProductForm from './ProductForm';
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/solid';
 import useProducts from '../hooks/products';
 import { ExitIcon } from '@radix-ui/react-icons';
-import { X } from 'shadcn-react/icons';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 const Products = () => {
     const [editingProduct, setEditingProduct] = useState(null);
@@ -77,7 +77,7 @@ const Products = () => {
                     <div className="bg-white dark:bg-gray-800 dark:text-gray-200 p-6 rounded shadow-lg w-96">
                         <div className="flex justify-between items-center  mb-4">
                             <h3 className="text-xl ">{editingProduct ? 'Mahsulotni Tahrirlash' : 'Yangi Mahsulot Qo\'shish'}</h3>
-                            <button onClick={() => setShowDialog(false)}><X /></button>
+                            <button onClick={() => setShowDialog(false)} className='text-xl flex text-red-500' > Yopish</button>
                         </div>
                         <ProductForm
                             product={editingProduct}
