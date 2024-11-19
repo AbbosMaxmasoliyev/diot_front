@@ -5,8 +5,6 @@ import Customers from './components/Customers';
 import Orders from './components/Orders';
 import Sales from './components/Sales';
 import InventoryList from './components/InventoryList'; // Ombordagi mahsulotlar sahifasi
-import { Button } from 'shadcn-react';
-import 'shadcn-react/style.css';
 import Home from './components/Home';
 
 function App() {
@@ -16,52 +14,52 @@ function App() {
                 {/* Navigatsiya */}
                 <nav className="flex gap-4 p-5 mb-8 md:flex-row flex-col">
                     <Link to="/">
-                        <Button
-                            variant="ghost"
+                        <p
+
                             className="hover:text-blue-500 dark:hover:text-blue-400"
                         >
                             Bosh sahifa
-                        </Button>
+                        </p>
                     </Link>
                     <Link to="/products">
-                        <Button
-                            variant="ghost"
+                        <p
+
                             className="hover:text-blue-500 dark:hover:text-blue-400"
                         >
                             Mahsulotlar
-                        </Button>
+                        </p>
                     </Link>
                     <Link to="/customers">
-                        <Button
-                            variant="ghost"
+                        <p
+
                             className="hover:text-blue-500 dark:hover:text-blue-400"
                         >
                             Mijozlar
-                        </Button>
+                        </p>
                     </Link>
                     <Link to="/orders">
-                        <Button
-                            variant="ghost"
+                        <p
+
                             className="hover:text-blue-500 dark:hover:text-blue-400"
                         >
                             Buyurtmalar
-                        </Button>
+                        </p>
                     </Link>
                     <Link to="/inventory">
-                        <Button
-                            variant="ghost"
+                        <p
+
                             className="hover:text-blue-500 dark:hover:text-blue-400"
                         >
                             Ombor
-                        </Button>
+                        </p>
                     </Link>
                     <Link to="/sales">
-                        <Button
-                            variant="ghost"
+                        <p
+
                             className="hover:text-blue-500 dark:hover:text-blue-400"
                         >
                             Sotuv
-                        </Button>
+                        </p>
                     </Link>
                 </nav>
 
