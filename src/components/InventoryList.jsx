@@ -1,97 +1,126 @@
 // src/components/InventoryList.js
-import React, { useState } from 'react';
-import api from '../api';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
-import InventoryForm from './InventoryForm';
-import { OrbitProgress } from 'react-loading-indicators';
+import React, { useState, useEffect } from 'react';
 import useInventory from '../hooks/invetory';
+import Pagination from './Pagination';
+import { formatCurrency } from '../utils/converter';
+import InventoryForm from './InventoryForm'; // Modal uchun form import qilamiz
+import ImportForm from './ImportForm';
+import ImportList from './ImportList';
 
 const InventoryList = () => {
-    const [editingInventory, setEditingInventory] = useState(null);
-    const [showDialog, setShowDialog] = useState(false);
+    const { inventory, totalCount, fetchInventory, loading, error } = useInventory();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [importShow, setImportShow] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal holatini boshqarish
+    const [selectedInventory, setSelectedInventory] = useState(null); // Tanlangan inventar
 
-    const { inventory, loading, error, refreshInventory } = useInventory(); // Custom Hook ishlatilgan
+    const itemsPerPage = 10; // Har bir sahifadagi elementlar soni
 
-    const deleteInventory = (id) => {
-        api.delete(`/inventory/${id}`)
-            .then(() => {
-                refreshInventory(); // Yangi inventory ro'yxatini olish uchun refresh
-            })
-            .catch(err => console.error('Xatolik:', err));
+    useEffect(() => {
+        fetchInventory({ page: currentPage, limit: itemsPerPage });
+    }, [currentPage]);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
-    console.log(inventory);
-    
+
+    const openModal = (inventory = null) => {
+        setSelectedInventory(inventory); // Tanlangan inventarni saqlaymiz
+        setIsModalOpen(true); // Modalni ochamiz
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false); // Modalni yopamiz
+        setSelectedInventory(null); // Tanlangan inventarni tozalaymiz
+    };
+
+    const handleCreateInventory = () => {
+        openModal(); // Yangi inventar qo‘shish uchun modalni ochish
+    };
+
+    const handleEditInventory = (inventory) => {
+        openModal(inventory); // Tanlangan inventarni tahrirlash uchun modalni ochish
+    };
+
+    if (loading) return <p className="text-gray-700 dark:text-gray-300">Yuklanmoqda...</p>;
+    if (error) return <p className="text-red-500 dark:text-red-400">Xatolik yuz berdi: {error}</p>;
+
     return (
-        <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6">
-            <div className="mb-4 flex justify-between flex-wrap">
-                <h2 className="text-2xl font-bold mb-4">Ombor</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div className="flex gap-5">
                 <button
-                    onClick={() => {
-                        setEditingInventory(null);
-                        setShowDialog(true);
-                    }}
-                    className="bg-blue-500 dark:bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-600"
+                    onClick={handleCreateInventory}
+                    className="bg-blue-500 text-white py-2 px-6 rounded-md mb-4 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none"
                 >
-                    Yangi Mahsulot Qo'shish
+                    Yangi Inventar Qo‘shish
+                </button>
+                <button
+                    onClick={() => setImportShow(prev => !prev)}
+                    className="bg-green-500 text-white py-2 px-6 rounded-md mb-4 hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600 focus:outline-none"
+                >
+                    {importShow ? "Import" : "Ombor"}
                 </button>
             </div>
+            {
+                !importShow ? <>
+                    <h1 className="text-xl font-bold mb-5">Ombor</h1>
 
-            {/* Mahsulotlar kartochkalari */}
-            {loading ? (
-                <div className="flex justify-center">
-                    <OrbitProgress variant="track-disc" dense color="#004fff" size="large" text="Loading" />
-                </div>
-            ) : error ? (
-                <div className="flex justify-center">
-                    <p className="text-center text-red-500 col-span-full">{error}</p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {inventory.map(item => (
-                        <div key={item._id} className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300">
-                            <h3 className="text-xl font-semibold mb-2">Mahsulot: {item?.productId?.name}</h3>
-                            <p className="text-gray-600 dark:text-gray-400 mb-2">Miqdori: {item.totalQuantity}</p>
-                            <p className="text-gray-600 dark:text-gray-400 mb-2">Narxi: {item.price} so'm</p>
+                    <table className="table-auto w-full border-collapse border border-gray-400 dark:border-gray-700">
+                        <thead>
+                            <tr className="bg-gray-200 dark:bg-gray-700">
+                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Mahsulot</th>
+                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Narx</th>
+                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Zaxira</th>
+                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {inventory.map((item) => (
+                                <tr key={item._id} className="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
+                                        {item.productId.name}
+                                    </td>
+                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
+                                        {formatCurrency(item.price)}
+                                    </td>
+                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
+                                        {item.totalQuantity} ta
+                                    </td>
+                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
+                                        <button
+                                            onClick={() => handleEditInventory(item)}
+                                            className="bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500"
+                                        >
+                                            Tahrirlash
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                            <div className="flex justify-start gap-4">
-                                <button
-                                    className="bg-yellow-500 dark:bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-600 dark:hover:bg-yellow-500 flex items-center"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setShowDialog(true);
-                                        setEditingInventory(item);
-                                    }} // Tahrirlash uchun
-                                >
-                                    <PencilIcon className="h-5 w-5" />
-                                </button>
-                                <button
-                                    className="bg-red-500 dark:bg-red-600 text-white py-1 px-3 rounded hover:bg-red-600 dark:hover:bg-red-500 flex items-center"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        deleteInventory(item._id);
-                                    }} // O'chirish uchun
-                                >
-                                    <TrashIcon className="h-5 w-5" />
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={totalCount}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={handlePageChange}
+                    />
+
+                    {/* InventoryForm Modalini ochish */}
+
+                </>
+                    :
+                    <ImportList />
+            }
+
+            {isModalOpen && (
+                <ImportForm
+                    inventory={selectedInventory}  // Agar inventar tahrirlanayotgan bo'lsa, unga moslashtiramiz
+                    onClose={closeModal}  // Modalni yopish uchun funksiya
+                    refreshImports={fetchInventory}  // Inventarni yangilash uchun funksiyani uzatish
+                />
             )}
 
-            {/* Mahsulot qo'shish yoki tahrirlash uchun form */}
-            {showDialog && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
-                    <div className="bg-white dark:bg-gray-800 dark:text-gray-200 p-6 rounded shadow-lg w-96">
-                        <h3 className="text-xl mb-4">{editingInventory ? 'Mahsulotni Tahrirlash' : 'Yangi Mahsulot Qo\'shish'}</h3>
-                        <InventoryForm
-                            inventory={editingInventory}
-                            onClose={() => setShowDialog(false)}
-                            refreshInventory={refreshInventory}  // refreshInventory Custom Hook-dan olindi
-                        />
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

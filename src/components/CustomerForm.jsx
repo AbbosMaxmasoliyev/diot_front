@@ -9,14 +9,12 @@ const CustomerForm = ({ customer, onClose, refreshCustomers }) => {
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [region, setRegion] = useState('');
-    const [distance, setDistance] = useState('');
-   
+    
     useEffect(() => {
         if (customer) {
             setName(customer.name);
             setPhoneNumber(customer.phoneNumber);
             setRegion(customer.region);
-            setDistance(customer.distance);
         }
 
         return (() => {
@@ -28,7 +26,7 @@ const CustomerForm = ({ customer, onClose, refreshCustomers }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const newCustomer = { name, phoneNumber, region: region, distance };
+        const newCustomer = { name, phoneNumber, region: region, };
         console.log(newCustomer);
 
         if (customer) {
@@ -91,16 +89,7 @@ const CustomerForm = ({ customer, onClose, refreshCustomers }) => {
                         className="w-full px-4 py-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-gray-200 border-gray-300 dark:border-gray-600"
                     />
                 </div>
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        placeholder="Masofa"
-                        defaultValue={distance}
-                        onChange={(e) => setDistance(e.target.value)}
-                        required
-                        className="w-full px-4 py-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-gray-200 border-gray-300 dark:border-gray-600"
-                    />
-                </div>
+             
                 <div className="flex justify-end">
                     <button
                         type="submit"

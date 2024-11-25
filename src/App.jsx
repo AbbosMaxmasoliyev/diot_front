@@ -1,79 +1,115 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { createBrowserRouter, RouterProvider, Link, Outlet } from 'react-router-dom';
 import Products from './components/Products';
 import Customers from './components/Customers';
 import Orders from './components/Orders';
 import Sales from './components/Sales';
-import InventoryList from './components/InventoryList'; // Ombordagi mahsulotlar sahifasi
+import InventoryList from './components/InventoryList';
 import Home from './components/Home';
+import Supplies from './components/Supplies';
+import useInventory from './hooks/invetory';
+import InventoryItem from './components/InventoryItem';
+import api from './api';
 
-function App() {
+// Yuklanish jarayonida fallback
+function LoadingFallback() {
     return (
-        <Router>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 p-y-8 sm:p-2 ">
-                {/* Navigatsiya */}
-                <nav className="flex gap-4 p-5 mb-8 md:flex-row flex-col">
-                    <Link to="/">
-                        <p
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-800">
+            <p className="text-gray-800 dark:text-gray-200 text-lg">Yuklanmoqda...</p>
+        </div>
+    );
+}
 
-                            className="hover:text-blue-500 dark:hover:text-blue-400"
-                        >
-                            Bosh sahifa
-                        </p>
+// Xatoliklarni boshqarish uchun komponent
+function ErrorFallback({ error }) {
+    return (
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-800">
+            <p className="text-red-500 text-lg">Xatolik yuz berdi: {error?.message}</p>
+        </div>
+    );
+}
+
+// Asosiy layout komponent
+function Layout() {
+    return (
+        <div >
+            <div className='bg-gray-50 dark:bg-gray-800 mb-5'>
+                <nav className="flex gap-4 p-5 mb-8 md:flex-row flex-col bg-gray-50 dark:bg-gray-800 container">
+                    <Link to="/" className="hover:text-blue-500 dark:hover:text-blue-400">
+                        Bosh sahifa
                     </Link>
-                    <Link to="/products">
-                        <p
-
-                            className="hover:text-blue-500 dark:hover:text-blue-400"
-                        >
-                            Mahsulotlar
-                        </p>
+                    <Link to="/products" className="hover:text-blue-500 dark:hover:text-blue-400">
+                        Mahsulotlar
                     </Link>
-                    <Link to="/customers">
-                        <p
-
-                            className="hover:text-blue-500 dark:hover:text-blue-400"
-                        >
-                            Mijozlar
-                        </p>
+                    <Link to="/customers" className="hover:text-blue-500 dark:hover:text-blue-400">
+                        Mijozlar
                     </Link>
-                    <Link to="/orders">
-                        <p
-
-                            className="hover:text-blue-500 dark:hover:text-blue-400"
-                        >
-                            Buyurtmalar
-                        </p>
+                    <Link to="/orders" className="hover:text-blue-500 dark:hover:text-blue-400">
+                        Buyurtmalar
                     </Link>
-                    <Link to="/inventory">
-                        <p
-
-                            className="hover:text-blue-500 dark:hover:text-blue-400"
-                        >
-                            Ombor
-                        </p>
+                    <Link to="/inventory" className="hover:text-blue-500 dark:hover:text-blue-400">
+                        Ombor
                     </Link>
-                    <Link to="/sales">
-                        <p
-
-                            className="hover:text-blue-500 dark:hover:text-blue-400"
-                        >
-                            Sotuv
-                        </p>
+                    <Link to="/sales" className="hover:text-blue-500 dark:hover:text-blue-400">
+                        Sotuv
+                    </Link>
+                    <Link to="/supply" className="hover:text-blue-500 dark:hover:text-blue-400">
+                        Ta'minlovchilar
                     </Link>
                 </nav>
-
-                {/* Sahifalar */}
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/customers" element={<Customers />} />
-                    <Route path="/orders" element={<Orders />} />
-                    <Route path="/inventory" element={<InventoryList />} /> {/* Ombor sahifasi */}
-                    <Route path="/sales" element={<Sales />} /> {/* Ombor sahifasi */}
-                </Routes>
             </div>
-        </Router>
+            <main className="container">
+                <Outlet />
+            </main>
+        </div>
+    );
+}
+
+const fetchInventoryItem = async (id) => {
+
+    try {
+        const response = await api.get(`/inventory-byId/${id}`);
+        console.log(response.data, "=====>>>>>>> Inventory Item");
+        return response.data; // Ma'lumotni qaytarish
+    } catch (err) {
+        throw new Error('Inventarlarni olishda xatolik yuz berdi');
+    }
+};
+
+function App() {
+
+
+    const router = createBrowserRouter([
+        {
+            element: <Layout />,
+            errorElement: <ErrorFallback />, // Xatolikni ko‘rsatish
+            children: [
+                { path: '/', element: <Home /> },
+                { path: '/products', element: <Products /> },
+                { path: '/customers', element: <Customers /> },
+                { path: '/orders', element: <Orders /> },
+                { path: '/inventory', element: <InventoryList /> },
+                {
+                    path: '/inventory-item/:id',
+                    element: <InventoryItem />,
+                    loader: async ({ params }) => {
+                        const data = await fetchInventoryItem(params.id);
+                        if (!data) throw new Error('Inventar topilmadi');
+                        return data;
+                    },
+                },
+                { path: '/sales', element: <Sales /> },
+                { path: '/supply', element: <Supplies /> },
+            ],
+        },
+    ]);
+
+    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+            <Suspense fallback={<LoadingFallback />}>
+                <RouterProvider router={router} />
+            </Suspense>
+        </div>
     );
 }
 

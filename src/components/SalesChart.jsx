@@ -63,7 +63,7 @@ const SalesChart = ({ displayed, title }) => {
     };
 
     return (
-        <div className="w-96 flex flex-col gap-4">
+        <div className="w-[100%]    ">
             <div className="flex gap-3 md:flex-row flex-col  justify-between flex-wrap">
                 <h2>{title}</h2>
                 <select

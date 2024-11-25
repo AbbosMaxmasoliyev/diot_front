@@ -61,7 +61,7 @@ const InventoryChart = ({ title }) => {
     };
 
     return (
-        <div className="max-w-96">
+        <div className="w-[100%] ">
             <div className="flex gap-3 md:flex-row flex-col  justify-between flex-wrap">
                 <h2>{title}</h2>
                 <select

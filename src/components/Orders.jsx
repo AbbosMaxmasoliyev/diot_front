@@ -4,6 +4,7 @@ import { TrashIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import useOrders from '../hooks/orders'; // Import the custom hook
 import { formatPhoneNumber } from '../utils/converter';
 import Payments from './payments';
+import moment from 'moment';
 
 const Orders = () => {
     const [editingOrder, setEditingOrder] = useState(null);
@@ -29,16 +30,17 @@ const Orders = () => {
     return (
         <>
             <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6">
-                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Buyurtmalar</h2>
-
-                {/* New order button */}
-                <div className="mb-4 flex justify-end">
-                    <button
-                        onClick={() => setShowDialog(true)}
-                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700"
-                    >
-                        Yangi Buyurtma
-                    </button>
+                <div className="flex justify-between">
+                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Buyurtmalar</h2>
+                    {/* New order button */}
+                    <div className="mb-4 flex justify-end">
+                        <button
+                            onClick={() => setShowDialog(true)}
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700"
+                        >
+                            Yangi Buyurtma
+                        </button>
+                    </div>
                 </div>
 
                 {/* Loading and error handling */}
@@ -73,7 +75,7 @@ const Orders = () => {
                                 <p className="text-gray-600 dark:text-gray-400 mb-2 flex gap-2">
                                     <strong>To'lov usuli:</strong> <Payments paymentMethod={order.paymentMethod} />
                                 </p>
-
+                               
                                 <div className="flex justify-start gap-4">
                                     <button
                                         className="bg-yellow-500 dark:bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-600 dark:hover:bg-yellow-500 flex items-center"

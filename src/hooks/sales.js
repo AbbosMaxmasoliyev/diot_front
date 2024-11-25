@@ -1,68 +1,53 @@
-import { useState, useEffect } from 'react';
-import api from '../api'; // API bilan ishlash uchun maxsus konfiguratsiya
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import api from '../api'; // API bilan ishlash uchun konfiguratsiya
 
-const useSales = () => {
+const useSales = (initialPage = 1, initialLimit = 10) => {
     const [sales, setSales] = useState([]); // Sotuvlar ro'yxati
-    const [report, setReport] = useState(null); // Hisobot ma'lumotlari
+    const [totalPages, setTotalPages] = useState(1); // Umumiy sahifalar soni
+    const [currentPage, setCurrentPage] = useState(initialPage); // Hozirgi sahifa
+    const [limit, setLimit] = useState(initialLimit); // Har sahifada nechta sotuv
     const [loading, setLoading] = useState(false); // Yuklanish holati
     const [error, setError] = useState(null); // Xatolik holati
 
-    // Sotuvlar ro'yxatini olish
-    const fetchSales = async () => {
+    // Sotuvlarni olish funksiyasi
+    const fetchSales = useCallback(async (page = currentPage, limitValue = limit) => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await api.get('/sales'); // `/sales` API so'rovi
-            setSales(response.data); // Sotuvlar ma'lumotlarini saqlash
+            const response = await api.get(`/sales?page=${page}&limit=${limitValue}`);
+            setSales(response.data.sales);
+            setTotalPages(response.data.totalPages);
+            setCurrentPage(response.data.currentPage);
         } catch (err) {
-            setError(err.response?.data?.message || 'Sotuvlar ma\'lumotini olishda xatolik yuz berdi');
+            setError(err.response?.data?.message || 'Sotuvlarni olishda xatolik yuz berdi');
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, limit]);
 
-    // Hisobot olish
-    const fetchReport = async (query = {}) => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            // Query parametrlari bilan API so'rov
-            const queryString = new URLSearchParams(query).toString();
-            const response = await api.get(`/sales/report?${queryString}`);
-            console.log(response);
-            
-            setReport(response.data); // Hisobot ma'lumotlarini saqlash
-        } catch (err) {
-            console.log(err);
-
-            setError(err.response?.data?.message || 'Hisobotni olishda xatolik yuz berdi');
-        } finally {
-            setLoading(false);
+    // Sahifalarni yangilashni memorlashtirish
+    const updatePage = useCallback((page) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page);
         }
-    };
+    }, [totalPages]);
 
-    // Hook yuklanishda sotuvlarni avtomatik chaqiradi
+    // Hook ilk yuklanishda sotuvlarni olish
     useEffect(() => {
         fetchSales();
-        fetchReport()
-    }, []);
+    }, [fetchSales]);
 
-    // Sotuvlarni yangilash uchun funksiya
-    const refreshSales = () => {
-        fetchSales();
-    };
-
-    // Qaytarilayotgan qiymatlar
-    return {
-        sales,        // Sotuvlar ro'yxati
-        report,       // Hisobot ma'lumotlari
-        loading,      // Yuklanish holati
-        error,        // Xatolik holati
-        refreshSales, // Ro'yxatni yangilash funksiyasi
-        fetchReport,  // Hisobotni olish funksiyasi
-    };
+    return useMemo(() => ({
+        sales,          // Sotuvlar ro'yxati
+        totalPages,     // Umumiy sahifalar soni
+        currentPage,    // Hozirgi sahifa
+        loading,        // Yuklanish holati
+        error,          // Xatolik holati
+        updatePage,     // Sahifani yangilash funksiyasi
+        fetchSales,     // Sotuvlarni qayta yuklash funksiyasi
+        setLimit,       // Limitni o'rnatish
+    }), [sales, totalPages, currentPage, loading, error, updatePage, fetchSales]);
 };
 
 export default useSales;

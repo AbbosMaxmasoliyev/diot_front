@@ -3,20 +3,23 @@ import { useState, useEffect } from 'react';
 import api from '../api';
 
 const useInventory = () => {
-    const [inventory, setInventory] = useState([]); // Barcha inventar ma'lumotlari
-    const [report, setReport] = useState([]); // Hisobot ma'lumotlari
-    const [loading, setLoading] = useState(false); // Yuklanish holati
-    const [error, setError] = useState(null); // Xatolik holati
-    const [reportLoading, setReportLoading] = useState(false); // Hisobot yuklanish holati
-    const [reportError, setReportError] = useState(null); // Hisobot xatolik holati
+    const [inventory, setInventory] = useState([]);
+    const [totalCount, setTotalCount] = useState(0); // Umumiy elementlar soni
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // Barcha inventar ma'lumotlarini olish
-    const fetchInventory = async () => {
-        setLoading(true);
+    // Inventar ma'lumotlarini olish
+    const fetchInventory = async (params) => {
+        const queryString = new URLSearchParams(params).toString();
+
         setError(null);
+        setLoading(true);
         try {
-            const response = await api.get('/inventory');
-            setInventory(response.data);
+            const response = await api.get(`/inventory?${queryString}`);
+            console.log(response.data, "=====>>>>>>> Inventories");
+
+            setInventory(response.data.data || []);
+            setTotalCount(response.data.totalCount || 0); // Backend'dan umumiy sonni oling
         } catch (err) {
             setError('Inventarlarni olishda xatolik yuz berdi');
         } finally {
@@ -24,50 +27,18 @@ const useInventory = () => {
         }
     };
 
-    // Hisobot ma'lumotlarini olish
-    const fetchReport = async (params = {}) => {
-        setReportLoading(true);
-        setReportError(null);
-        try {
-            // Query parametrlarini URL formatiga o'tkazish
-            const queryString = new URLSearchParams(params).toString();
-            const response = await api.get(`/inventory/income/report?${queryString}`);
-            console.log(response, "=>>> Report inventor");
-
-            setReport(response.data);
-        } catch (err) {
-            setReportError('Hisobotni olishda xatolik yuz berdi');
-        } finally {
-            setReportLoading(false);
-        }
-    };
-
     // Hook yuklanishda inventarni avtomatik chaqiradi
     useEffect(() => {
-        fetchInventory();
-        fetchReport()
+        fetchInventory({ page: 1, limit: 10 }); // Standart sahifa va limit
     }, []);
-
-    // Inventarni yangilash uchun funksiya
-    const refreshInventory = () => {
-        fetchInventory();
-    };
-
-    // Hisobotni yangilash uchun funksiya
-    const refreshReport = (params) => {
-        fetchReport(params);
-    };
 
     // Qaytarilayotgan qiymatlar
     return {
-        inventory,        // Barcha inventar ma'lumotlari
-        report,           // Hisobot ma'lumotlari
-        loading,          // Inventar yuklanish holati
-        error,            // Inventar xatolik holati
-        reportLoading,    // Hisobot yuklanish holati
-        reportError,      // Hisobot xatolik holati
-        refreshInventory, // Inventarni yangilash funksiyasi
-        refreshReport,    // Hisobotni yangilash funksiyasi
+        inventory,
+        totalCount, // Umumiy elementlar soni
+        loading,
+        error,
+        fetchInventory,
     };
 };
 
