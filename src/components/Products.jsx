@@ -42,7 +42,8 @@ const Products = () => {
                 {products.map(product => (
                     <div key={product._id} className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                        <p className="text-gray-600 dark:text-gray-400 mb-2">Narx: {product.price} so'm</p>
+                        <p className="text-gray-600 dark:text-gray-400 mb-2">Kategoriyasi: {product.category}</p>
+                        {/* <p className="text-gray-600 dark:text-gray-400 mb-2">Kategoriyasi: {product.}</p> */}
 
                         <div className="flex justify-start gap-4">
                             <button

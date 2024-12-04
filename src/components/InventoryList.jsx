@@ -81,7 +81,7 @@ const InventoryList = () => {
                                         {item.productId.name}
                                     </td>
                                     <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
-                                        {formatCurrency(item.price)}
+                                        {formatCurrency(item.price.cost, item.price.currency)}
                                     </td>
                                     <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
                                         {item.totalQuantity} ta

@@ -98,7 +98,7 @@ const InventorSearch = React.memo(({ onSelect, }) => {
                                 }`}
                             tabIndex={0} // Fokuslash imkoniyati uchun
                         >
-                            {product.productId.name} - {formatCurrency(product.productId.price)}
+                            {product.productId.name} - {product.productId.category}
                         </li>
                     ))}
                 </ul>
@@ -204,7 +204,7 @@ const ProductSearch = React.memo(({ onSelect, }) => {
                                 }`}
                             tabIndex={0} // Fokuslash imkoniyati uchun
                         >
-                            {product.name} - {formatCurrency(product.price)}
+                            {product.name} - {product.category}
                         </li>
                     ))}
                 </ul>

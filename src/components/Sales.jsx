@@ -39,7 +39,7 @@ const Sales = () => {
             setEditingSale(null);
         }
     };
-
+    console.log(sales)
 
     return (
         <>
@@ -70,17 +70,18 @@ const Sales = () => {
                                     className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 hover:bg-gray-100 dark:hover:bg-gray-700"
                                 >
                                     <h3 className="text-xl font-semibold mb-2">
-                                        Mijoz: {sale.customerId.name}
+                                        Mijoz: {sale.customerId?.name}
                                     </h3>
                                     <p className="text-gray-600 dark:text-gray-400 mb-2">
                                         <strong>Mahsulotlar:</strong>{' '}
                                         {sale.products
-                                            .map((p) => p.productId.name)
+                                            .map((p) => p.productId?.name)
                                             .join(', ')}
                                     </p>
                                     <p className="text-gray-600 dark:text-gray-400 mb-2">
                                         <strong>Umumiy Narx:</strong>{' '}
-                                        {formatCurrency(sale.totalPrice)}
+                                        <p>{formatCurrency(sale?.totalPrice[0].cost, sale.totalPrice[0].currency)}</p>
+                                        <p>{formatCurrency(sale?.totalPrice[1].cost, sale.totalPrice[1].currency)}</p>
                                     </p>
                                     <p className="text-gray-600 dark:text-gray-400 mb-2">
                                         <strong>To'lov Holati:</strong>{' '}

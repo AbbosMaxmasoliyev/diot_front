@@ -5,6 +5,7 @@ import useInventory from '../hooks/invetory';
 import { InventorSearch } from './ProductSearch';
 import { formatCurrency } from '../utils/converter';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import PriceInput from './InputPrice';
 
 const SalesForm = ({ order, onClose, refreshOrders }) => {
     const [customer, setCustomer] = useState('');
@@ -43,6 +44,8 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
     }, []);
 
     const handleProductSelect = useCallback((product) => {
+        console.log(product);
+
         setSelectedProducts((prev) => {
             const existingProduct = prev.find((p) => p.productId === product.productId?._id);
             if (existingProduct) {
@@ -57,7 +60,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                 {
                     productId: product.productId?._id,
                     name: product.productId?.name,
-                    price: product.productId?.price,
+                    price: product.price,
                     quantity: 1,
                     totalQuantity: product?.totalQuantity,
                 },
@@ -79,14 +82,45 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
         if (!selectedProducts.length) return 0;
 
         const total = selectedProducts.reduce(
-            (sum, product) => sum + product.price * product.quantity,
-            0
+            (sum, product) => {
+                const currency = product.price?.currency || "UZS"; // Default to "UZS" if currency is undefined
+                const cost = product.price?.cost || 0;
+                const total = cost * product.quantity;
+
+                // Increment the sum for the specific currency
+                sum[currency] = (sum[currency] || 0) + total;
+                console.log(sum);
+
+                return sum;
+            },
+            { "USD": 0, "UZS": 0 } // Initial sums for each currency
         );
 
         const discountFactor = 1 - (discountApplied / 100 || 0);
 
-        return total * discountFactor;
+        return { "UZS": total.UZS * discountFactor, "USD": total.USD * discountFactor };
     }, [selectedProducts, discountApplied]);
+
+
+    const totalCostIncome = useMemo(() => {
+        return selectedProducts.reduce(
+            (sum, product) => {
+                const currency = product.price?.currency || "UZS"; // Default to "UZS" if currency is undefined
+                const cost = product.price?.cost || 0;
+                const total = cost * product.quantity;
+
+                // Increment the sum for the specific currency
+                sum[currency] = (sum[currency] || 0) + total;
+                console.log(sum);
+
+                return sum;
+            },
+            { "USD": 0, "UZS": 0 } // Initial sums for each currency
+        );
+    }, [selectedProducts]);
+
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -96,6 +130,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
             products: selectedProducts,
             paymentMethod,
             discountApplied,
+            totalPrice
         };
 
         try {
@@ -111,6 +146,10 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
             console.error(err);
         }
     };
+
+    console.log(selectedProducts);
+    console.log(totalCostIncome);
+
 
     return (
         <>
@@ -143,6 +182,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                                                         {product.name}
                                                     </td>
                                                     <td className="px-4 py-2 border border-gray-300 dark:border-gray-700">
+
                                                         <input
                                                             type="number"
                                                             value={product.quantity}
@@ -152,7 +192,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                                                         />
                                                     </td>
                                                     <td className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200">
-                                                        {formatCurrency(product.price * Number(product.quantity))}
+                                                        {formatCurrency(product.price.cost * Number(product.quantity), product.price.currency)}
                                                     </td>
                                                 </tr>
                                             );
@@ -191,8 +231,9 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                     <div className="flex justify-between my-4 items-center">
                         <div className="flex flex-col">
                             <label htmlFor="discount">Chegirma</label>
-                            <div className="flex flex-row w-full justify-between">
-                                <span className='relative  w-3/12'>
+                            <div className="flex flex-col w-full justify-between">
+                                <span className='relative  w-6/12'>
+
                                     <input
                                         type="number"
                                         value={discountApplied}
@@ -206,7 +247,10 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                                     </span>
                                 </span>
                                 <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200">
-                                    Umumiy: {formatCurrency(totalPrice)}
+                                    Umumiy (so'mda): {formatCurrency(totalPrice.UZS || 0, "UZS")}
+                                </p>
+                                <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200">
+                                    Umumiy (dollarda): {formatCurrency(totalPrice.USD || 0, "USD")}
                                 </p>
                             </div>
                         </div>

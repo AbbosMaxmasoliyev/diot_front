@@ -1,17 +1,18 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import api from '../api';
 import useSuppliers from '../hooks/supplies';
-import useInventory from '../hooks/invetory';
+import useProducts from '../hooks/products';
 import { ProductSearch } from './ProductSearch';
 import { formatCurrency } from '../utils/converter';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import useProducts from '../hooks/products';
+import PriceInput from './InputPrice';
 
 const ImportForm = ({ importItem, onClose, refreshImports }) => {
     const [supplier, setSupplier] = useState('');
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [paymentMethod, setPaymentMethod] = useState('cash');
     const [additionalCosts, setAdditionalCosts] = useState(0);
+    const [currencyCost, setCurrencyCost] = useState('UZS');
     const [error, setError] = useState('');
     const { supplies } = useSuppliers();
     const { products } = useProducts();
@@ -23,12 +24,14 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                 importItem.products.map((p) => ({
                     productId: p.productId?._id,
                     name: p.productId?.name,
-                    costPrice: p.incomePrice || 0,
+                    incomePrice: p.incomePrice || { cost: 0, currency: 'USD' },
+                    costPrice: p.costPrice || { cost: 0, currency: 'USD' },
                     quantity: p.quantity,
                 }))
             );
             setPaymentMethod(importItem.paymentMethod);
-            setAdditionalCosts(importItem.additionalCosts || 0);
+            setAdditionalCosts(importItem.additionalCosts?.cost || 0);
+            setCurrencyCost(importItem.additionalCosts?.currency || 'UZS');
         } else {
             resetForm();
         }
@@ -39,77 +42,127 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
         setSelectedProducts([]);
         setPaymentMethod('cash');
         setAdditionalCosts(0);
+        setCurrencyCost('UZS');
         setError('');
     }, []);
 
     const handleProductSelect = useCallback((product) => {
+
         setSelectedProducts((prev) => {
-            const existingProduct = prev.find((p) => p._id === product._id);
-            if (existingProduct) {
-                return prev.map((p) =>
-                    p._id === product._id
-                        ? { ...p, quantity: Math.min(p.quantity + 1, product.totalQuantity) }
-                        : p
-                );
+            // Find if the product already exists in the selected products
+            const existingProductIndex = prev.findIndex((p) => p.productId === product._id);
+
+            if (existingProductIndex !== -1) {
+                // Create a copy of the existing array
+                const updatedProducts = [...prev];
+                const existingProduct = updatedProducts[existingProductIndex];
+
+                // Update the quantity of the existing product
+                updatedProducts[existingProductIndex] = {
+                    ...existingProduct,
+                    quantity: existingProduct.quantity + 1,
+                };
+
+                return updatedProducts;
             }
+            let price = product.price
+            console.log(price);
+
+            // If the product doesn't exist, add it as a new entry
             return [
                 ...prev,
                 {
                     productId: product._id,
                     name: product.name,
-                    costPrice: product.price,
+                    incomePrice: { cost: price, currency: 'USD' },
+                    costPrice: { cost: price, currency: 'USD' },
                     quantity: 1,
                 },
             ];
         });
+        console.log(selectedProducts);
+
     }, []);
 
     const handleQuantityChange = useCallback((productId, quantity) => {
         setSelectedProducts((prev) =>
             prev.map((p) =>
-                p._id === productId
+                p.productId === productId
                     ? { ...p, quantity: Math.max(1, parseInt(quantity) || 1) }
                     : p
             )
         );
     }, []);
 
-    const handleIncomePrice = useCallback((productId, incomePrice) => {
+    const handlePriceChange = useCallback((productId, price, currency, type) => {
         setSelectedProducts((prev) =>
             prev.map((p) =>
-                p._id === productId
-                    ? { ...p, incomePrice: parseFloat(incomePrice) }
+                p.productId === productId
+                    ? {
+                        ...p,
+                        [type]: {
+                            cost: parseFloat(price) || 0,
+                            currency: currency || 'USD',
+                        },
+                    }
                     : p
             )
         );
     }, []);
 
-    const handleSalePrice = useCallback((productId, costPrice) => {
-        setSelectedProducts((prev) =>
-            prev.map((p) =>
-                p._id === productId
-                    ? { ...p, costPrice: parseFloat(costPrice) }
-                    : p
-            )
-        );
-    }, []);
-    const totalCost = useMemo(() => {
+    const totalCostIncome = useMemo(() => {
         return selectedProducts.reduce(
-            (sum, product) => sum + product.costPrice * product.quantity,
-            0
-        ) + parseFloat(additionalCosts || 0);
-    }, [selectedProducts, additionalCosts]);
+            (sum, product) => {
+                const currency = product.incomePrice?.currency || "UZS"; // Default to "UZS" if currency is undefined
+                const cost = product.incomePrice?.cost || 0;
+                const total = cost * product.quantity;
+
+                // Increment the sum for the specific currency
+                sum[currency] = (sum[currency] || 0) + total;
+                console.log(sum);
+
+                return sum;
+            },
+            { "USD": 0, "UZS": 0 } // Initial sums for each currency
+        );
+    }, [selectedProducts]);
+
+    // const totalCostSale = useMemo(() => {
+    //     return (
+    //         selectedProducts.reduce(
+    //             (sum, product) => sum + (product.costPrice?.cost || 0) * product.quantity,
+    //             0
+    //         ) + parseFloat(additionalCosts || 0)
+    //     );
+    // }, [selectedProducts, additionalCosts]);
+
+    const totalCostSale = useMemo(() => {
+        return selectedProducts.reduce(
+            (sum, product) => {
+                const currency = product.costPrice?.currency || "UZS"; // Default to "UZS" if currency is undefined
+                const cost = product.costPrice?.cost || 0;
+                const total = cost * product.quantity;
+
+                // Increment the sum for the specific currency
+                sum[currency] = (sum[currency] || 0) + total;
+                console.log(sum);
+
+                return sum;
+            },
+            { "USD": 0, "UZS": 0 } // Initial sums for each currency
+        );
+    }, [selectedProducts]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         if (!supplier) {
-            setError("Yetkazib beruvchi tanlanmagan!");
+            setError('Yetkazib beruvchi tanlanmagan!');
             return;
         }
         if (selectedProducts.length === 0) {
-            setError("Hech qanday mahsulot tanlanmagan!");
+            setError('Hech qanday mahsulot tanlanmagan!');
             return;
         }
 
@@ -119,13 +172,36 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                 productId: p.productId,
                 quantity: p.quantity,
                 costPrice: p.costPrice,
-                incomePrice: p.incomePrice
+                incomePrice: p.incomePrice,
             })),
             paymentMethod,
-            additionalCosts: parseFloat(additionalCosts || 0),
+            additionalCosts: {
+                cost: parseFloat(additionalCosts || 0),
+                currency: currencyCost,
+            },
+            totalCost: [{
+                cost: selectedProducts.reduce((sum, pro) => {
+                    const price = pro.incomePrice.cost || 0; // Ensure price is a number, default to 0 if undefined
+                    if (pro.incomePrice.currency === "UZS") {
+                        return sum + price; // Add price to sum if currency is UZS
+                    }
+                    return sum; // Otherwise, just return the current sum
+                }, 0),
+                currency: "UZS"
+            },
+            {
+                cost: selectedProducts.reduce((sum, pro) => {
+                    const price = pro.incomePrice.cost || 0; // Ensure price is a number, default to 0 if undefined
+                    if (pro.incomePrice.currency === "USD") {
+                        return sum + price; // Add price to sum if currency is UZS
+                    }
+                    return sum; // Otherwise, just return the current sum
+                }, 0),
+                currency: "USD"
+            },]
         };
-
         console.log(newImport);
+
 
         try {
             if (importItem) {
@@ -143,8 +219,8 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
     };
 
     return (
-        <div className="fixed   inset-0 flex items-start justify-end bg-gray-900 bg-opacity-50 z-50 ">
-            <div className="relative min-h-screen  w-11/12 max-w-4xl bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg ">
+        <div className="fixed inset-0 flex items-start justify-end bg-gray-900 bg-opacity-50 z-50">
+            <div className="relative min-h-screen w-11/12 max-w-4xl bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
                 <button className="absolute top-4 right-4" onClick={onClose}>
                     <XMarkIcon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                 </button>
@@ -152,9 +228,7 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                     <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                         {importItem ? 'Importni tahrirlash' : 'Yangi import'}
                     </h2>
-                    {error && (
-                        <p className="text-red-500 text-sm">{error}</p>
-                    )}
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                             <label className="block text-gray-900 dark:text-gray-200 font-semibold">
@@ -178,12 +252,18 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                             <label className="block text-gray-900 dark:text-gray-200 font-semibold">
                                 Qo'shimcha xarajatlar
                             </label>
-                            <input
-                                type="number"
-                                value={additionalCosts}
-                                onChange={(e) => setAdditionalCosts(e.target.value)}
-                                className="w-full mt-2 px-3 py-2 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200"
-                            />
+                            <div className="mt-2">
+                                <PriceInput
+                                    placeholder="Chegirma"
+                                    inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                    selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                    onChange={(price, currency) => {
+                                        setAdditionalCosts(price);
+                                        setCurrencyCost(currency);
+                                    }}
+                                    defaultCurrency="USD"
+                                />
+                            </div>
                         </div>
                     </div>
                     <ProductSearch onSelect={handleProductSelect} />
@@ -207,31 +287,45 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                                                 <input
                                                     type="number"
                                                     value={product.quantity}
-                                                    max={10000}
-                                                    onChange={(e) => handleQuantityChange(product._id, e.target.value)}
+                                                    onChange={(e) =>
+                                                        handleQuantityChange(product.productId, e.target.value)
+                                                    }
                                                     className="w-16 px-2 py-1 border rounded dark:bg-gray-600"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
-                                                <input
-                                                    type="number"
-                                                    value={product.incomePrice}
-                                                    placeholder='Kirish narxi'
-                                                    onChange={(e) => handleIncomePrice(product._id, e.target.value)}
-                                                    className="w-16 px-2 py-1 border rounded dark:bg-gray-600"
+                                                <PriceInput
+                                                    inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                                    selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
+
+                                                    onChange={(price, currency) =>
+                                                        handlePriceChange(product.productId, price, currency, 'incomePrice')
+                                                    }
+                                                    defaultCurrency={product.incomePrice.currency}
+                                                    placeholder="Kirim narxi"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
-                                                <input
-                                                    type="number"
-                                                    value={product.costPrice}
-                                                    placeholder='Sotuv narxi'
-                                                    onChange={(e) => handleSalePrice(product._id, e.target.value)}
-                                                    className="w-16 px-2 py-1 border rounded dark:bg-gray-600"
+                                                {
+                                                    (() => {
+                                                        console.log(product)
+                                                    })()
+
+                                                }
+                                                <PriceInput
+                                                    inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                                    selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                                    min={product.incomePrice.cost}
+                                                    costPrice={product.costPrice.cost}
+                                                    onChange={(price, currency) =>
+                                                        handlePriceChange(product.productId, price, currency, 'costPrice')
+                                                    }
+                                                    defaultCurrency={product.costPrice.currency}
+                                                    placeholder="Sotish narxi"
                                                 />
                                             </td>
                                             <td className="px-4 py-2">
-                                                {formatCurrency(product.costPrice * product.quantity)}
+                                                {formatCurrency(product.incomePrice.cost * product.quantity, product.incomePrice.currency)}
                                             </td>
                                         </tr>
                                     ))}
@@ -242,8 +336,16 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                         )}
                     </div>
                     <div className="flex justify-between items-center">
+                        <div className="flex flex-col">
+
+                            Kirim holati:
+                            <p className='text-lg  text-gray-900 dark:text-gray-200'>So'mda kirayotgan mahsulotlari kirimi: <span className='font-bold'>{formatCurrency(totalCostIncome.UZS, "UZS")}</span></p>
+                            <p className='text-lg  text-gray-900 dark:text-gray-200'>Dollarda kirayotgan mahsulotlar uchun: <span className='font-bold'>{formatCurrency(totalCostIncome.USD, "USD")}</span></p>
+                            <p className='text-lg  text-gray-900 dark:text-gray-200'>Qo'shimcha harajatlar: <span className='font-bold'>{formatCurrency(additionalCosts, currencyCost)}</span></p>
+                        </div>
                         <p className="text-lg font-bold text-gray-900 dark:text-gray-200">
-                            Umumiy: {formatCurrency(totalCost)}
+                            Sotuv holati: {formatCurrency(totalCostSale.UZS, "UZS")} + {formatCurrency(totalCostSale.USD, "USD")}
+
                         </p>
                         <button
                             type="submit"
