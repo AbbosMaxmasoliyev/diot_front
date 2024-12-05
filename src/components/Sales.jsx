@@ -74,14 +74,14 @@ const Sales = () => {
                                     </h3>
                                     <p className="text-gray-600 dark:text-gray-400 mb-2">
                                         <strong>Mahsulotlar:</strong>{' '}
-                                        {sale.products
+                                        {sale.outgoings
                                             .map((p) => p.productId?.name)
                                             .join(', ')}
                                     </p>
                                     <p className="text-gray-600 dark:text-gray-400 mb-2">
                                         <strong>Umumiy Narx:</strong>{' '}
-                                        <p>{formatCurrency(sale?.totalPrice[0].cost, sale.totalPrice[0].currency)}</p>
-                                        <p>{formatCurrency(sale?.totalPrice[1].cost, sale.totalPrice[1].currency)}</p>
+                                        <p>{formatCurrency(sale?.totalPrice[0]?.cost, sale.totalPrice[0].currency)}</p>
+                                        <p>{formatCurrency(sale?.totalPrice[1]?.cost, sale.totalPrice[1].currency)}</p>
                                     </p>
                                     <p className="text-gray-600 dark:text-gray-400 mb-2">
                                         <strong>To'lov Holati:</strong>{' '}
