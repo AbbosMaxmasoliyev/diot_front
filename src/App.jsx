@@ -30,9 +30,10 @@ function ErrorFallback({ error }) {
 }
 
 // Asosiy layout komponent
-function Layout() {
+function Layout({ token }) {
     return (
         <div >
+            <p>{token}</p>
             <div className='bg-gray-50 dark:bg-gray-800 mb-5'>
                 <nav className="flex gap-4 p-5 mb-8 md:flex-row flex-col bg-gray-50 dark:bg-gray-800 container">
                     <Link to="/" className="hover:text-blue-500 dark:hover:text-blue-400">
@@ -78,10 +79,11 @@ const fetchInventoryItem = async (id) => {
 
 function App() {
 
-
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    console.log(ua)
     const router = createBrowserRouter([
         {
-            element: <Layout />,
+            element: <Layout token={ua} />,
             errorElement: <ErrorFallback />, // Xatolikni ko‘rsatish
             children: [
                 { path: '/', element: <Home /> },

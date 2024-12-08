@@ -5,6 +5,7 @@ import useSales from '../hooks/sales';
 import { formatCurrency } from '../utils/converter';
 import Payments from './payments';
 import api from '../api';
+import SaleDetailsPdf from './SalePdfDetail';
 
 const Sales = () => {
     const [editingSale, setEditingSale] = useState(null);
@@ -39,7 +40,12 @@ const Sales = () => {
             setEditingSale(null);
         }
     };
-    console.log(sales)
+
+
+    const printCheck = (sale) => {
+        console.log(sale);
+
+    }
 
     return (
         <>
@@ -103,6 +109,7 @@ const Sales = () => {
                                             <PencilIcon className="h-5 w-5" />
                                             Tahrirlash
                                         </button>
+                                        <SaleDetailsPdf sale={sale} />
                                         <button
                                             className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 flex items-center"
                                             onClick={() => deleteSale(sale._id)}
