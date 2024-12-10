@@ -98,7 +98,7 @@ const Sales = () => {
                                         {new Date(sale.date).toLocaleDateString()}
                                     </p>
 
-                                    <div className="flex justify-start gap-4">
+                                    <div className="flex justify-start gap-4 ">
                                         <button
                                             className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 flex items-center"
                                             onClick={() => {
@@ -107,7 +107,9 @@ const Sales = () => {
                                             }}
                                         >
                                             <PencilIcon className="h-5 w-5" />
-                                            Tahrirlash
+                                            <span className='hidden md:block'>
+                                                Tahrirlash
+                                            </span>
                                         </button>
                                         <SaleDetailsPdf sale={sale} />
                                         <button
@@ -115,7 +117,9 @@ const Sales = () => {
                                             onClick={() => deleteSale(sale._id)}
                                         >
                                             <TrashIcon className="h-5 w-5" />
-                                            O'chirish
+                                            <span className='hidden md:block'>
+                                                O'chirish
+                                            </span>
                                         </button>
                                     </div>
                                 </div>

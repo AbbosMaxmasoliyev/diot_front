@@ -3,6 +3,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { formatCurrency, formatPhoneNumber } from '../utils/converter';
 import Payments from './payments';
+import { FileIcon } from '@radix-ui/react-icons';
 
 const SaleDetailsPdf = ({ sale }) => {
     const generatePdf = () => {
@@ -97,7 +98,8 @@ const SaleDetailsPdf = ({ sale }) => {
             onClick={generatePdf}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-            Print
+            <FileIcon />
+            <span className='hidden md:block'>Chop etish</span>
         </button>
     );
 };

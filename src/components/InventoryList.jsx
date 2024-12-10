@@ -6,6 +6,7 @@ import { formatCurrency } from '../utils/converter';
 import InventoryForm from './InventoryForm'; // Modal uchun form import qilamiz
 import ImportForm from './ImportForm';
 import ImportList from './ImportList';
+import { Pencil1Icon, UpdateIcon } from '@radix-ui/react-icons';
 
 const InventoryList = () => {
     const { inventory, totalCount, fetchInventory, loading, error } = useInventory();
@@ -64,40 +65,45 @@ const InventoryList = () => {
             {
                 !importShow ? <>
                     <h1 className="text-xl font-bold mb-5">Ombor</h1>
+                    <div className="overflow-x-auto">
 
-                    <table className="table-auto w-full border-collapse border border-gray-400 dark:border-gray-700">
-                        <thead>
-                            <tr className="bg-gray-200 dark:bg-gray-700">
-                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Mahsulot</th>
-                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Narx</th>
-                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Zaxira</th>
-                                <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Amallar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {inventory.map((item) => (
-                                <tr key={item._id} className="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
-                                        {item.productId.name}
-                                    </td>
-                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
-                                        {formatCurrency(item.price.cost, item.price.currency)}
-                                    </td>
-                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
-                                        {item.totalQuantity} ta
-                                    </td>
-                                    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">
-                                        <button
-                                            onClick={() => handleEditInventory(item)}
-                                            className="bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500"
-                                        >
-                                            Tahrirlash
-                                        </button>
-                                    </td>
+                        <table className="table-auto w-full border-collapse border border-gray-400 dark:border-gray-700">
+                            <thead>
+                                <tr className="bg-gray-200 dark:bg-gray-700">
+                                    <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">Mahsulot</th>
+                                    <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">Narx</th>
+                                    <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">Zaxira</th>
+                                    <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">Amallar</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {inventory.map((item) => (
+                                    <tr key={item._id} className="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">
+                                            {item.productId.name}
+                                        </td>
+                                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">
+                                            {formatCurrency(item.price.cost, item.price.currency)}
+                                        </td>
+                                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">
+                                            {item.totalQuantity} ta
+                                        </td>
+                                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">
+                                            <button
+                                                onClick={() => handleEditInventory(item)}
+                                                className="bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500"
+                                            >
+                                                <span className='hidden md:block'>
+                                                    Tahrirlash
+                                                </span>
+                                                <Pencil1Icon />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
                     <Pagination
                         currentPage={currentPage}
