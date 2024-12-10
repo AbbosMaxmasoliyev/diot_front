@@ -1,8 +1,8 @@
 {
-    "short_name": "Diot App",
-    "name": "Diot App",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#000000"
+    "name": "Diot",
+    "theme_color": "#000000",
+    "background_color": "#000000",
+    "short_name": "diot_front",
+    "id": "45232abn789",
+    "description": "BU ilova Lochibek uchun yaratilgan"
 }
