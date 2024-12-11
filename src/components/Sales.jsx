@@ -6,7 +6,7 @@ import { formatCurrency } from '../utils/converter';
 import Payments from './payments';
 import api from '../api';
 import SaleDetailsPdf from './SalePdfDetail';
-import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
+import { ArrowLeftIcon, ArrowRightIcon, ExitFullScreenIcon, ResetIcon, UpdateIcon } from '@radix-ui/react-icons';
 
 const Sales = () => {
     const [editingSale, setEditingSale] = useState(null);
@@ -14,6 +14,7 @@ const Sales = () => {
     const [inputValue, setInputValue] = useState(1);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [showFilters, setShowFilters] = useState(false); // Filtrlarni ko'rsatish yoki yashirish holati
 
     const {
         sales,
@@ -33,6 +34,7 @@ const Sales = () => {
         updateStartDate(startDate);
         updateEndDate(endDate);
         fetchSales(1, undefined, startDate, endDate);
+        setShowFilters(false)
     };
     // Function to delete a sale
     const deleteSale = async (id) => {
@@ -58,40 +60,69 @@ const Sales = () => {
 
     }
 
+    const resetFilter = () => {
+        setStartDate("")
+        setEndDate("")
+    }
+
     return (
         <>
             <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6">
-                <div className="mb-4 flex justify-between flex-col md:flex-row gap-5 flex-wrap">
+                <div className="mb-4 flex justify-between flex-row gap-5 flex-wrap">
                     <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
                         Sotuvlar
                     </h2>
 
 
-                    <div className="flex flex-col md:flex-row items-stretch sm:items-center gap-4">
-                        <input
-                            type="date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                            className="border p-2 rounded dark:bg-gray-700 dark:text-white w-full sm:w-auto"
-                        />
-                        <input
-                            type="date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            className="border p-2 rounded dark:bg-gray-700 dark:text-white w-full sm:w-auto"
-                        />
+                    <div className="flex flex-col gap-4">
+                        {/* Toggle Button */}
                         <button
-                            onClick={handleFilter}
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full sm:w-auto"
+                            onClick={() => setShowFilters(!showFilters)}
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
                         >
-                            Filtrlash
+                            {showFilters ? "Yopish" : "Filtr va Amal"}
                         </button>
-                        <button
-                            onClick={() => setShowDialog(true)}
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700"
-                        >
-                            Yangi Sotuv
-                        </button>
+
+                        {/* Conditional Rendered Filters and Actions */}
+                        {showFilters && (
+                            <div className="flex flex-col md:flex-row   items-end gap-4 absolute dark:bg-gray-800  w-[290px] right-7 p-6 pt-0 rounded-lg">
+                                <button
+                                    onClick={() => setShowFilters(false)}
+                                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
+                                >
+                                    <ExitFullScreenIcon />
+                                </button>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="border p-2 rounded dark:bg-gray-700 dark:text-white  w-full"
+                                />
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="border p-2 rounded dark:bg-gray-700 dark:text-white w-full "
+                                />
+                                <button
+                                    onClick={handleFilter}
+                                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl"
+                                >
+                                    Filtrlash
+                                </button>
+                                <div className="flex gap-5 w-full">
+                                    <button className='bg-green-500 text-white py-2 px-4 flex justify-center items-center rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl' onClick={resetFilter}>
+                                        <UpdateIcon />
+                                    </button>
+                                    <button
+                                        onClick={() => console.log("Yangi Sotuv bosildi")}
+                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl "
+                                    >
+                                        Yangi Sotuv
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -166,7 +197,7 @@ const Sales = () => {
                         <div className="flex flex-row justify-between">
                             <div className="flex justify-center mt-4">
                                 <button
-                                    className="bg-gray-500 py-2 px-4 rounded-l disabled:opacity-70 text-white"
+                                    className="bg-gray-500 py-2 px-4 rounded-l disabled:opacity-70 text-white flex flex-row items-center gap-3"
                                     onClick={() => {
                                         setInputValue(currentPage - 1)
                                         updatePage(currentPage - 1)
@@ -195,17 +226,17 @@ const Sales = () => {
                                     / {totalPages}
                                 </span>
                                 <button
-                                    className="bg-gray-500 py-2 px-4 rounded-r disabled:opacity-70 text-white"
+                                    className="bg-gray-500 py-2 px-4 rounded-r disabled:opacity-70 text-white flex flex-row items-center gap-3"
                                     onClick={() => {
                                         setInputValue(currentPage + 1)
                                         updatePage(currentPage + 1)
                                     }}
                                     disabled={currentPage === totalPages}
                                 >
-                                    <ArrowRightIcon />
                                     <span className='hidden md:inline'>
                                         Keyingi
                                     </span>
+                                    <ArrowRightIcon />
                                 </button>
                             </div>
                             <select
