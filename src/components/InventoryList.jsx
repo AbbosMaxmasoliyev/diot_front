@@ -51,7 +51,7 @@ const InventoryList = () => {
             <div className="flex gap-5">
                 <button
                     onClick={handleCreateInventory}
-                    className="bg-blue-500 text-white py-2 px-6 rounded-md mb-4 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none"
+                    className="bg-blue-500 text-white py-2 px-6 rounded-md mb-4 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none md:text-xl text-sm"
                 >
                     Yangi Inventar Qo‘shish
                 </button>
@@ -91,12 +91,12 @@ const InventoryList = () => {
                                         <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200 text-[12px] md:text-xl truncate text-clip">
                                             <button
                                                 onClick={() => handleEditInventory(item)}
-                                                className="bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500"
+                                                className="bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500 flex justify-center gap-[10px] items-center "
                                             >
-                                                <span className='hidden md:block'>
+                                                <span className='hidden md:inline'>
                                                     Tahrirlash
                                                 </span>
-                                                <Pencil1Icon />
+                                                <Pencil1Icon  className='text-lg' fontSize={30}/>
                                             </button>
                                         </td>
                                     </tr>

@@ -107,7 +107,7 @@ const Sales = () => {
                                             }}
                                         >
                                             <PencilIcon className="h-5 w-5" />
-                                            <span className='hidden md:block'>
+                                            <span className='hidden lg:inline'>
                                                 Tahrirlash
                                             </span>
                                         </button>
@@ -117,7 +117,7 @@ const Sales = () => {
                                             onClick={() => deleteSale(sale._id)}
                                         >
                                             <TrashIcon className="h-5 w-5" />
-                                            <span className='hidden md:block'>
+                                            <span className='hidden lg:inline'>
                                                 O'chirish
                                             </span>
                                         </button>

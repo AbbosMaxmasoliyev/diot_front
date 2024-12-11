@@ -77,8 +77,10 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
     }, [order]);
 
     const totalPrice = useMemo(() => {
-        if (!selectedProducts.length) return 0;
+        if (order) return { "UZS": order?.totalPrice[1].UZS, "USD": order?.totalPrice[0].USD };
 
+
+        if (!selectedProducts.length) return 0;
         const total = selectedProducts.reduce(
             (sum, product) => {
                 const currency = product.price?.currency || "UZS";
@@ -100,8 +102,10 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
         const updatedOrder = {
             customerId: customer,
             paymentMethod,
-            ...(order ? {} : { products: selectedProducts, discountApplied, totalPrice }),
+            discountApplied,
+            ...(order ? {} : { products: selectedProducts, totalPrice }),
         };
+        console.log(updatedOrder);
 
         try {
             if (order) {
@@ -120,7 +124,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
     return (
         <>
             <button className="w-5 h-5 fixed top-2" onClick={onClose}><XMarkIcon /></button>
-            <form onSubmit={handleSubmit} className="w-10/12 min-h-screen flex flex-col justify-between md:flex-row bg-gray-100 dark:bg-gray-800 p-4 rounded shadow-md gap-5">
+            <form onSubmit={handleSubmit} className="w-10/12 min-h-screen flex flex-col justify-start md:justify-between md:flex-row bg-gray-100 dark:bg-gray-800 p-4 rounded shadow-md gap-5">
                 <div className="mb-4 md:w-7/12">
                     <InventorSearch onSelect={handleProductSelect} disabled={!!order} />
                     <p className="font-bold text-lg text-gray-900 dark:text-gray-200 mt-5 mb-3">Savatcha</p>
@@ -138,9 +142,9 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                                     {selectedProducts.map((product) => (
                                         <tr
                                             key={product.productId}
-                                            className="bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                            className="bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 "
                                         >
-                                            <td className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200">
+                                            <td className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm md:text-lg truncate">
                                                 {product.name}
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300 dark:border-gray-700">
@@ -154,12 +158,14 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                                                 />
                                             </td>
                                             <td className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200">
-                                                {formatCurrency(product?.price * Number(product?.quantity), product?.currency)}
+
+                                                {formatCurrency(order ? product.price : product.price.cost * Number(product?.quantity), order ? product.currency : product.price.currency)}
                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
+                            {console.log(order)}
                         </div>
                     ) : (
                         <p className="font-semibold text-md text-gray-900 dark:text-gray-400">Iltimos mahsulotlarni tanlang</p>
@@ -185,7 +191,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                     </div>
                     <div className="flex justify-between my-4 items-center">
                         <div className="flex flex-col">
-                            <label htmlFor="discount">Chegirma</label>
+                            <label htmlFor="discount" className='text-gray-900 dark:text-gray-200'>Chegirma</label>
                             <input
                                 type="number"
                                 value={discountApplied}
@@ -195,11 +201,11 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                                 placeholder="Chegirma"
                                 className="w-full px-2 py-2 pr-4 border rounded focus:outline-none focus:ring focus:ring-blue-300 text-gray-900 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600"
                             />
-                            <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200">
-                                Umumiy (so'mda): {formatCurrency(totalPrice.UZS || 0, "UZS")}
+                            <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200 mt-4">
+                                Umumiy (so'mda): {formatCurrency(order ? order.totalPrice[0].cost : totalPrice.UZS || 0, "UZS")}
                             </p>
-                            <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200">
-                                Umumiy (dollarda): {formatCurrency(totalPrice.USD || 0, "USD")}
+                            <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200 mt-4">
+                                Umumiy (dollarda): {formatCurrency(order ? order.totalPrice[1].cost : totalPrice.USD || 0, "USD")}
                             </p>
                         </div>
                     </div>

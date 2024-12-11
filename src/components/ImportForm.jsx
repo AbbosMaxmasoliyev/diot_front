@@ -335,13 +335,13 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                             <p className="text-gray-700 dark:text-gray-300">Mahsulotlar tanlanmagan.</p>
                         )}
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-start flex-col">
                         <div className="flex flex-col">
 
                             Kirim holati:
-                            <p className='text-lg  text-gray-900 dark:text-gray-200'>So'mda kirayotgan mahsulotlari kirimi: <span className='font-bold'>{formatCurrency(totalCostIncome.UZS, "UZS")}</span></p>
-                            <p className='text-lg  text-gray-900 dark:text-gray-200'>Dollarda kirayotgan mahsulotlar uchun: <span className='font-bold'>{formatCurrency(totalCostIncome.USD, "USD")}</span></p>
-                            <p className='text-lg  text-gray-900 dark:text-gray-200'>Qo'shimcha harajatlar: <span className='font-bold'>{formatCurrency(additionalCosts, currencyCost)}</span></p>
+                            <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>So'mda kirayotgan mahsulotlari kirimi: <span className='font-bold'>{formatCurrency(totalCostIncome.UZS, "UZS")}</span></p>
+                            <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>Dollarda kirayotgan mahsulotlar uchun: <span className='font-bold'>{formatCurrency(totalCostIncome.USD, "USD")}</span></p>
+                            <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>Qo'shimcha harajatlar: <span className='font-bold'>{formatCurrency(additionalCosts, currencyCost)}</span></p>
                         </div>
                         <p className="text-lg font-bold text-gray-900 dark:text-gray-200">
                             Sotuv holati: {formatCurrency(totalCostSale.UZS, "UZS")} + {formatCurrency(totalCostSale.USD, "USD")}
