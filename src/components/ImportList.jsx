@@ -47,18 +47,18 @@ const ImportList = () => {
 
             {/* Sahifalash */}
             <div className="mt-4 flex justify-between items-center">
-                <div>
+                <div className='flex '>
                     <button
                         onClick={() => changePage(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded disabled:opacity-50"
+                        className="px-4 py-2 bg-blue-700 hover:bg-blue-400 rounded disabled:opacity-50 text-white"
                     >
                         Oldingi
                     </button>
                     <button
                         onClick={() => changePage(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="ml-2 px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded disabled:opacity-50"
+                        className="ml-2 px-4 py-2 bg-blue-700 hover:bg-blue-400 rounded disabled:opacity-50 text-white"
                     >
                         Keyingi
                     </button>
@@ -69,7 +69,7 @@ const ImportList = () => {
                         <select
                             value={pageSize}
                             onChange={(e) => setPageSize(Number(e.target.value))}
-                            className="px-2 py-1 border rounded dark:bg-gray-700"
+                            className="px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
                         >
                             <option value={5}>5</option>
                             <option value={10}>10</option>
