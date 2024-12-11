@@ -13,7 +13,7 @@ const ImportList = () => {
         setPageSize,
         refreshImports,
     } = useImports();
-    
+
     return (
         <div>
             <h1 className="text-xl font-bold">Importlar</h1>
@@ -25,7 +25,7 @@ const ImportList = () => {
             {!loading && imports.length > 0 && (
                 <table className="table-auto w-full mt-4 border-collapse border border-gray-300">
                     <thead>
-                        <tr  className="bg-gray-200 dark:bg-gray-700">
+                        <tr className="bg-gray-200 dark:bg-gray-700">
                             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Yetkazib beruvchi</th>
                             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">Mahsulotlar soni</th>
                             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-200">To'lov turi</th>
@@ -63,19 +63,19 @@ const ImportList = () => {
                         Keyingi
                     </button>
                 </div>
-                <div>
-                    <label>
+                <div className='flex items-center '>
+                    <label className='hidden md:inline'>
                         Sahifa hajmi:{' '}
-                        <select
-                            value={pageSize}
-                            onChange={(e) => setPageSize(Number(e.target.value))}
-                            className="px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
-                        >
-                            <option value={5}>5</option>
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                        </select>
                     </label>
+                    <select
+                        value={pageSize}
+                        onChange={(e) => setPageSize(Number(e.target.value))}
+                        className="px-2 py-1 border rounded dark:bg-gray-700 dark:text-white"
+                    >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                    </select>
                 </div>
             </div>
 
