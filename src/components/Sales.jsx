@@ -115,7 +115,7 @@ const Sales = () => {
                                         <UpdateIcon />
                                     </button>
                                     <button
-                                        onClick={() => console.log("Yangi Sotuv bosildi")}
+                                        onClick={() => setShowDialog(true)}
                                         className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl "
                                     >
                                         Yangi Sotuv
@@ -264,7 +264,7 @@ const Sales = () => {
             {showDialog && (
                 <div
                     id="dialog-background"
-                    className="fixed  w-full min-h-screen  bg-gray-900 bg-opacity-50 top-0 right-0 flex flex-row justify-end"
+                    className="fixed  w-full min-h-screen  bg-gray-900 bg-opacity-50 top-0 right-0 flex flex-row justify-end z-20"
                     onClick={handleCloseDialog}
                 >
                     <SaleForm
