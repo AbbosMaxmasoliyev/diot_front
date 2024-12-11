@@ -137,7 +137,7 @@ const Sales = () => {
                             {sales.map((sale) => (
                                 <div
                                     key={sale._id}
-                                    className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    className="bg-white dark:bg-gray-800 dark:text-gray-200 border-t border-b py-4 md:shadow-lg md:rounded-lg md:p-6 hover:bg-gray-100 md:dark:hover:bg-gray-700"
                                 >
                                     <h3 className="text-xl font-semibold mb-2">
                                         Mijoz: {sale.customerId?.name}
@@ -194,10 +194,10 @@ const Sales = () => {
                             </div>}
 
                         {/* Pagination */}
-                        <div className="flex flex-row justify-between">
-                            <div className="flex justify-center mt-4">
+                        <div className="flex flex-row justify-between gap-4 items-center mt-4">
+                            <div className="flex justify-center ">
                                 <button
-                                    className="bg-gray-500 py-2 px-4 rounded-l disabled:opacity-70 text-white flex flex-row items-center gap-3"
+                                    className="bg-gray-500 py-2 md:px-4 px-2 rounded-l disabled:opacity-70 text-white flex flex-row items-center gap-3"
                                     onClick={() => {
                                         setInputValue(currentPage - 1)
                                         updatePage(currentPage - 1)
@@ -207,10 +207,10 @@ const Sales = () => {
                                     <ArrowLeftIcon />
                                     <span className='hidden md:inline'>Oldingi</span>
                                 </button>
-                                <span className="px-4 py-2 dark:bg-gray-700 bg-gray-200">
+                                <span className="px-4 py-2 dark:bg-gray-700 bg-gray-200 flex flex-row ">
                                     <input
                                         type="number"
-                                        className="w-6 dark:bg-gray-700 text-center"
+                                        className="w-6 dark:bg-gray-700 text-center "
                                         onChange={(e) => setInputValue(Number(e.target.value))}
                                         onBlur={() => {
                                             if (inputValue >= 1 && inputValue <= totalPages) {
@@ -223,10 +223,10 @@ const Sales = () => {
                                         max={totalPages}
                                         value={inputValue}
                                     />
-                                    / {totalPages}
+                                    /{totalPages}
                                 </span>
                                 <button
-                                    className="bg-gray-500 py-2 px-4 rounded-r disabled:opacity-70 text-white flex flex-row items-center gap-3"
+                                    className="bg-gray-500 py-2 md:px-4 px-2 rounded-r disabled:opacity-70 text-white flex flex-row items-center gap-3"
                                     onClick={() => {
                                         setInputValue(currentPage + 1)
                                         updatePage(currentPage + 1)
@@ -247,7 +247,7 @@ const Sales = () => {
                                     setLimit(e.target.value)
                                 }}
                                 required
-                                className="w-24 text-center rounded-lg mt-2 px-1 py-2 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+                                className="w-24 text-center rounded-lg  px-1 md:py-2 py-0 h-10 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200 text-sm"
                             >
                                 <option value="1">1</option>
                                 <option value="5">5</option>
