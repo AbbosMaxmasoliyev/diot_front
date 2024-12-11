@@ -21,8 +21,8 @@ const Supplies = () => {
 
     return (
         <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6">
-            <div className="mb-4 flex justify-between flex-wrap">
-                <h2 className="text-2xl font-bold mb-4">Ta'minlovchilar</h2>
+            <div className="mb-4 flex justify-between flex-wrap items-center">
+                <h2 className="text-2xl font-bold ">Ta'minlovchilar</h2>
                 <button
                     onClick={() => {
                         setEditingSupply(null);
@@ -30,7 +30,7 @@ const Supplies = () => {
                     }}
                     className="bg-blue-500 dark:bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-600"
                 >
-                    Yangi Ta'minlovchi
+                    Qo'shish
                 </button>
             </div>
 

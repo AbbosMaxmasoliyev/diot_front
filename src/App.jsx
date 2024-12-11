@@ -164,7 +164,7 @@ function Layout({ token }) {
                 </div>
 
                 {/* Main content */}
-                <main className="container p-5 bg-gray-100 dark:bg-gray-900 rounded-lg">
+                <main className="container md:p-5 bg-gray-100 dark:bg-gray-900 rounded-lg">
                     <Outlet />
                 </main>
             </div>

@@ -53,7 +53,7 @@ const InventoryList = () => {
                     onClick={handleCreateInventory}
                     className="bg-blue-500 text-white py-2 px-6 rounded-md mb-4 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none md:text-xl text-sm"
                 >
-                    Yangi Inventar Qo‘shish
+                    Inventar Qo‘shish
                 </button>
                 <button
                     onClick={() => setImportShow(prev => !prev)}

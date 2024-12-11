@@ -31,13 +31,13 @@ const Orders = () => {
     return (
         <>
             <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6">
-                <div className="flex justify-between">
-                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Buyurtmalar</h2>
+                <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100 text-sm">Buyurtmalar</h2>
                     {/* New order button */}
                     <div className="mb-4 flex justify-end">
                         <button
                             onClick={() => setShowDialog(true)}
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700"
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm"
                         >
                             Yangi Buyurtma
                         </button>
@@ -56,7 +56,7 @@ const Orders = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {orders.map(order => (
-                            <div key={order._id} className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <div key={order._id} className="bg-white dark:bg-gray-800 dark:text-gray-200 md:shadow-lg md:rounded-lg md:p-6 py-4 md:py-0 border-t border-b hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <h3 className="text-xl font-semibold mb-2">{order.customer}</h3>
                                 <p className="text-gray-600 dark:text-gray-400 mb-2">
                                     <strong>Mahsulot:</strong> {order.customerId.name}-{order._id}
