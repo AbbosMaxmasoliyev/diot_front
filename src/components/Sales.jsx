@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import SaleForm from './SalesForm';
-import { TrashIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { TrashIcon, PencilIcon, XMarkIcon, ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/solid';
 import useSales from '../hooks/sales';
 import { formatCurrency } from '../utils/converter';
 import Payments from './payments';
 import api from '../api';
 import SaleDetailsPdf from './SalePdfDetail';
+import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 
 const Sales = () => {
     const [editingSale, setEditingSale] = useState(null);
     const [showDialog, setShowDialog] = useState(false);
     const [inputValue, setInputValue] = useState(1);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
-    // Hook for handling sales data
     const {
         sales,
         totalPages,
         currentPage,
         loading,
         error,
+        setLimit,
+        limit,
         updatePage,
-        fetchSales
+        fetchSales,
+        setStartDate: updateStartDate,
+        setEndDate: updateEndDate,
     } = useSales();
 
+    const handleFilter = () => {
+        updateStartDate(startDate);
+        updateEndDate(endDate);
+        fetchSales(1, undefined, startDate, endDate);
+    };
     // Function to delete a sale
     const deleteSale = async (id) => {
         try {
@@ -50,18 +61,40 @@ const Sales = () => {
     return (
         <>
             <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6">
-                <div className="mb-4 flex justify-between gap-5 flex-wrap">
+                <div className="mb-4 flex justify-between flex-col md:flex-row gap-5 flex-wrap">
                     <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
                         Sotuvlar
                     </h2>
 
-                    <button
-                        onClick={() => setShowDialog(true)}
-                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700"
-                    >
-                        Yangi Sotuv
-                    </button>
+
+                    <div className="flex flex-col md:flex-row items-stretch sm:items-center gap-4">
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="border p-2 rounded dark:bg-gray-700 dark:text-white w-full sm:w-auto"
+                        />
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="border p-2 rounded dark:bg-gray-700 dark:text-white w-full sm:w-auto"
+                        />
+                        <button
+                            onClick={handleFilter}
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full sm:w-auto"
+                        >
+                            Filtrlash
+                        </button>
+                        <button
+                            onClick={() => setShowDialog(true)}
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700"
+                        >
+                            Yangi Sotuv
+                        </button>
+                    </div>
                 </div>
+
 
                 {loading ? (
                     <p className="text-center text-gray-500 dark:text-gray-400">Yuklanmoqda...</p>
@@ -69,7 +102,7 @@ const Sales = () => {
                     <p className="text-center text-red-500">{error}</p>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        {sales.length ? <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                             {sales.map((sale) => (
                                 <div
                                     key={sale._id}
@@ -125,47 +158,72 @@ const Sales = () => {
                                 </div>
                             ))}
                         </div>
+                            : <div className='flex justify-center'>
+                                <p>Ushbu filtrga to'g'ri keladigan savdolar mavjud emas</p>
+                            </div>}
 
                         {/* Pagination */}
-                        <div className="flex justify-center mt-4">
-                            <button
-                                className="bg-gray-500 py-2 px-4 rounded-l disabled:opacity-70 dark:text-white"
-                                onClick={() => {
-                                    setInputValue(currentPage - 1)
-                                    updatePage(currentPage - 1)
-                                }}
-                                disabled={currentPage === 1}
-                            >
-                                Oldingi
-                            </button>
-                            <span className="px-4 py-2 dark:bg-gray-700 bg-gray-200">
-                                <input
-                                    type="number"
-                                    className="w-6 dark:bg-gray-700 text-center"
-                                    onChange={(e) => setInputValue(Number(e.target.value))}
-                                    onBlur={() => {
-                                        if (inputValue >= 1 && inputValue <= totalPages) {
-                                            updatePage(inputValue);
-                                        } else {
-                                            setInputValue(currentPage); // Reset if invalid
-                                        }
+                        <div className="flex flex-row justify-between">
+                            <div className="flex justify-center mt-4">
+                                <button
+                                    className="bg-gray-500 py-2 px-4 rounded-l disabled:opacity-70 text-white"
+                                    onClick={() => {
+                                        setInputValue(currentPage - 1)
+                                        updatePage(currentPage - 1)
                                     }}
-                                    min={1}
-                                    max={totalPages}
-                                    value={inputValue}
-                                />
-                                / {totalPages}
-                            </span>
-                            <button
-                                className="bg-gray-500 py-2 px-4 rounded-r disabled:opacity-70 dark:text-white"
-                                onClick={() => {
-                                    setInputValue(currentPage + 1)
-                                    updatePage(currentPage + 1)
+                                    disabled={currentPage === 1}
+                                >
+                                    <ArrowLeftIcon />
+                                    <span className='hidden md:inline'>Oldingi</span>
+                                </button>
+                                <span className="px-4 py-2 dark:bg-gray-700 bg-gray-200">
+                                    <input
+                                        type="number"
+                                        className="w-6 dark:bg-gray-700 text-center"
+                                        onChange={(e) => setInputValue(Number(e.target.value))}
+                                        onBlur={() => {
+                                            if (inputValue >= 1 && inputValue <= totalPages) {
+                                                updatePage(inputValue);
+                                            } else {
+                                                setInputValue(currentPage); // Reset if invalid
+                                            }
+                                        }}
+                                        min={1}
+                                        max={totalPages}
+                                        value={inputValue}
+                                    />
+                                    / {totalPages}
+                                </span>
+                                <button
+                                    className="bg-gray-500 py-2 px-4 rounded-r disabled:opacity-70 text-white"
+                                    onClick={() => {
+                                        setInputValue(currentPage + 1)
+                                        updatePage(currentPage + 1)
+                                    }}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    <ArrowRightIcon />
+                                    <span className='hidden md:inline'>
+                                        Keyingi
+                                    </span>
+                                </button>
+                            </div>
+                            <select
+                                value={limit}
+                                onChange={(e) => {
+                                    setInputValue(1)
+                                    updatePage(1)
+                                    setLimit(e.target.value)
                                 }}
-                                disabled={currentPage === totalPages}
+                                required
+                                className="w-24 text-center rounded-lg mt-2 px-1 py-2 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200"
                             >
-                                Keyingi
-                            </button>
+                                <option value="1">1</option>
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="all">all</option>
+                            </select>
                         </div>
                     </>
                 )}
