@@ -67,7 +67,7 @@ const Sales = () => {
 
     return (
         <>
-            <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6">
+            <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 relative">
                 <div className="mb-4 flex justify-between flex-row gap-5 flex-wrap">
                     <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
                         Sotuvlar
@@ -85,7 +85,7 @@ const Sales = () => {
 
                         {/* Conditional Rendered Filters and Actions */}
                         {showFilters && (
-                            <div className="flex flex-col md:flex-row   items-end gap-4 absolute dark:bg-gray-800  w-[290px] right-7 p-6 pt-0 rounded-lg">
+                            <div className="flex flex-col    items-end gap-4 absolute dark:bg-gray-800 bg-white  w-[290px] right-5 p-6 pt-0 rounded-lg">
                                 <button
                                     onClick={() => setShowFilters(false)}
                                     className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
