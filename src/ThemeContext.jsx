@@ -5,10 +5,12 @@ const ThemeContext = createContext();
 
 // ThemeProvider komponenti, ushbu komponentni App.jsx da o'rnatamiz
 export const ThemeProvider = ({ children }) => {
-    const [isDark, setIsDark] = useState(false);
+    const [isDark, setIsDark] = useState(localStorage.getItem("mode") || true);
 
     const toggleTheme = () => {
+
         setIsDark(prev => !prev);
+        localStorage.setItem("mode", isDark)
     };
 
     return (

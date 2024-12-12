@@ -123,7 +123,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
 
     return (
         <>
-            <button className="w-5 h-5 fixed top-2" onClick={onClose}><XMarkIcon /></button>
+            <button className="w-5 h-5 fixed top-2 dark:text-gray-100" onClick={onClose}><XMarkIcon /></button>
             <form onSubmit={handleSubmit} className="w-10/12 min-h-screen flex flex-col justify-start md:justify-between md:flex-row bg-gray-100 dark:bg-gray-800 p-4 rounded shadow-md gap-5">
                 <div className="mb-4 md:w-7/12">
                     <InventorSearch onSelect={handleProductSelect} disabled={!!order} />

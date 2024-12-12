@@ -65,6 +65,15 @@ const Sales = () => {
         setEndDate("")
     }
 
+    // useEffect(() => {
+    //     document.body.addEventListener("click", (E) => {
+    //         E.stopPropagation()
+    //         console.log(E.target.outerText === "Filtr va Amal");
+
+    //         setShowFilters(false)
+    //     })
+    // }, [])
+
     return (
         <>
             <div className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 relative ">
@@ -85,7 +94,7 @@ const Sales = () => {
 
                         {/* Conditional Rendered Filters and Actions */}
                         {showFilters && (
-                            <div className="flex flex-col z-10    items-end gap-4 absolute dark:bg-gray-800 bg-white  min-w-[290px] md:w-[450px] right-[-20px] md:right-0 top-0 p-6  rounded-lg">
+                            <div className="flex flex-col z-10    items-end gap-4 absolute dark:bg-gray-800 bg-white  min-w-[290px] md:w-[450px] right-[0] md:right-0 top-0 p-6  rounded-lg">
                                 <button
                                     onClick={() => setShowFilters(false)}
                                     className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
