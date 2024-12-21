@@ -254,7 +254,7 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                             </label>
                             <div className="mt-2">
                                 <PriceInput
-                                    placeholder="Chegirma"
+                                    placeholder="Qo'shimcha harajatlar"
                                     inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
                                     selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
                                     onChange={(price, currency) => {
@@ -267,10 +267,10 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                         </div>
                     </div>
                     <ProductSearch onSelect={handleProductSelect} />
-                    <div>
+                    <div className=''>
                         <h3 className="font-bold text-gray-900 dark:text-gray-200">Tanlangan mahsulotlar</h3>
                         {selectedProducts.length ? (
-                            <table className="w-full mt-2 border border-gray-300 dark:border-gray-700">
+                            <table className="w-full mt-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200">
                                 <thead>
                                     <tr className="bg-gray-200 dark:bg-gray-800">
                                         <th className="px-4 py-2 text-left">Nomi</th>
@@ -337,8 +337,9 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                     </div>
                     <div className="flex justify-between items-start flex-col">
                         <div className="flex flex-col">
-
-                            Kirim holati:
+                            <p className="text-gray-800 dark:text-gray-200">
+                                Kirim holati:
+                            </p>
                             <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>So'mda kirayotgan mahsulotlari kirimi: <span className='font-bold'>{formatCurrency(totalCostIncome.UZS, "UZS")}</span></p>
                             <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>Dollarda kirayotgan mahsulotlar uchun: <span className='font-bold'>{formatCurrency(totalCostIncome.USD, "USD")}</span></p>
                             <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>Qo'shimcha harajatlar: <span className='font-bold'>{formatCurrency(additionalCosts, currencyCost)}</span></p>
