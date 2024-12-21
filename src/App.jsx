@@ -44,7 +44,7 @@ function Layout() {
     useEffect(() => {
         const validateToken = async () => {
             const token = getToken();
-            if (!token) {
+            if (!token && location.pathname != "/signup") {
                 navigate('/login');
                 return;
             }
@@ -54,7 +54,10 @@ function Layout() {
             } catch (error) {
                 console.error('Token validation failed:', error);
                 removeToken();
-                navigate('/login');
+                if (location.pathname != "/signup") {
+                    navigate('/login');
+                    return;
+                }
             }
         };
 
@@ -144,9 +147,9 @@ function App() {
 
     return (
         <ThemeProvider>
-                <Suspense fallback={<LoadingFallback />}>
-                    <RouterProvider router={router} />
-                </Suspense>
+            <Suspense fallback={<LoadingFallback />}>
+                <RouterProvider router={router} />
+            </Suspense>
         </ThemeProvider>
     );
 }
