@@ -15,7 +15,7 @@ const ImportList = () => {
     } = useImports();
 
     return (
-        <div>
+        <div className='text-gray-700 dark:text-gray-200'>
             <h1 className="text-xl font-bold">Importlar</h1>
             {loading && <p>Yuklanmoqda...</p>}
             {error && <p className="text-red-500">{error}</p>}
