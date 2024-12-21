@@ -11,6 +11,8 @@ export const ThemeProvider = ({ children }) => {
 
         setIsDark(prev => !prev);
         localStorage.setItem("mode", isDark)
+        document.body.classList.toggle("dark bg-gray-900")
+
     };
 
     return (
