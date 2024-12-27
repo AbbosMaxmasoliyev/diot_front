@@ -4,5 +4,6 @@
     "background_color": "#000000",
     "short_name": "diot_front",
     "id": "45232abn789",
-    "description": "BU ilova Lochibek uchun yaratilgan"
+    "description": "BU ilova Lochibek uchun yaratilgan",
+    "display": "standalone"
 }
