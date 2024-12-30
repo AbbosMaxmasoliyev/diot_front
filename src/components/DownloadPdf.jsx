@@ -51,6 +51,8 @@ const DownloadPdf = () => {
 
     // Handle navigation or window close
     const handleClose = () => {
+        console.log(window.history.length);
+        
         if (window.history.length > 1) {
             navigate(-1); // Go back if there's history
         } else {
