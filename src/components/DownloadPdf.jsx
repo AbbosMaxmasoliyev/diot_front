@@ -40,7 +40,7 @@ const DownloadPdf = () => {
                 },
                 jsPDF: {
                     unit: 'mm',
-                    format: [80, (contentHeight * 0.264583)+10], // Convert height to mm
+                    format: [80, ((contentHeight + 256) * 0.264583)], // Convert height to mm
                     orientation: 'portrait',
                 },
             };
