@@ -148,7 +148,7 @@ function App() {
         {
 
 
-            path: '/download/:saleId/:invoice', element: <DownloadPdf />
+            path: '/download/:saleId/:invoice/:size', element: <DownloadPdf />
 
         }
     ]);
