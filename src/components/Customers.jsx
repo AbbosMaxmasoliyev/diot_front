@@ -53,7 +53,6 @@ const Customers = () => {
                             <h3 className="text-xl font-semibold mb-2">{customer.name}</h3>
                             <p className="text-gray-600 dark:text-gray-400 mb-2">Telefon: {formatPhoneNumber(customer.phoneNumber)}</p>
                             <p className="text-gray-600 dark:text-gray-400 mb-2">Manzil: {customer.region}</p>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">Chegirma: {customer.discountRate * 100}%</p>
 
                             <div className="flex justify-start gap-4">
                                 <button

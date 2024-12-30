@@ -26,7 +26,7 @@ export function Navbar() {
         <div>
             <div className="bg-white dark:bg-gray-800">
                 {/* Navbar */}
-                <nav className="flex md:hidden justify-between items-center p-5 mb-8 bg-white dark:bg-gray-800 shadow-lg rounded-md container">
+                <nav className="flex md:hidden justify-between items-center p-5 mb-8 bg-white dark:bg-gray-800 shadow-lg rounded-md container-custom">
                     <div className="flex items-center justify-between w-full">
                         <button
                             className="lg:hidden p-2 text-2xl dark:text-white text-gray-800"
@@ -39,7 +39,7 @@ export function Navbar() {
                 </nav>
 
                 {/* Navbar (desktop) */}
-                <nav className="hidden md:flex gap-4 p-5 mb-8 justify-between  container shadow-lg rounded-md">
+                <nav className="hidden md:flex gap-4 p-5 mb-8 justify-between  container-custom shadow-lg rounded-md">
                     <div className="flex gap-4">
                         <Link
                             to="/"

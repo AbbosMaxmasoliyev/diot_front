@@ -18,7 +18,7 @@ const PriceInput = ({
 
     // Handle price change
     const handlePriceChange = (e) => {
-        const value = parseFloat(e.target.value) || 0; // Default to 0 if input is invalid
+        const value = parseFloat(e.target.value); // Default to 0 if input is invalid
         if (min < value) {
             inputRef.current.value = value
         }
@@ -48,11 +48,9 @@ const PriceInput = ({
                 ref={inputRef}
                 value={price}
                 defaultValue={costPrice}
-                min={min}
                 onChange={handlePriceChange}
                 className={`${inputClass} w-32 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200`}
                 placeholder={placeholder}
-                step="1" // Allows fractional price input
             />
             <select
                 value={currency}

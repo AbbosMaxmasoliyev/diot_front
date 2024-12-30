@@ -22,15 +22,21 @@ const formatPhoneNumber = (value) => {
  */
 const formatCurrency = (value, currency = 'UZS', locale = 'uz-UZ') => {
     try {
-        return new Intl.NumberFormat(locale, {
-            style: 'currency',
-            currency,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2,
-        }).format(value);
+
+        if (value == 0 || value < 0 || isNaN(value)) {
+            return 0
+        } else {
+            return new Intl.NumberFormat(locale, {
+                style: 'currency',
+                currency,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+            }).format(value);
+        }
+
     } catch (error) {
         console.error('Valyuta formatlashda xatolik:', error);
-        return value.toString(); // Xatolik bo'lsa, oddiy qiymatni qaytaradi
+        return 0; // Xatolik bo'lsa, oddiy qiymatni qaytaradi
     }
 };
 

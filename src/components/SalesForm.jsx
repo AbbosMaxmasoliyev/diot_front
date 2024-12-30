@@ -70,7 +70,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
         setSelectedProducts((prev) =>
             prev.map((p) =>
                 p.productId === productId
-                    ? { ...p, quantity: Math.max(1, Math.min(parseInt(quantity) || 1, p.totalQuantity)) }
+                    ? { ...p, quantity: Math.max(1, Math.min(parseInt(quantity), p.totalQuantity)) }
                     : p
             )
         );
@@ -220,6 +220,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                             <option value="cash">Naqd</option>
                             <option value="card">Karta</option>
                             <option value="transfer">O'tkazma</option>
+                            <option value="debit">Qarz</option>
                         </select>
                     </div>
                     <div className="flex justify-end">

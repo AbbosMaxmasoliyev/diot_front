@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import api from "../api";
 
-const useSales = (initialPage = 1, initialLimit = 10, initialStartDate = null, initialEndDate = null) => {
+const useSales = (initialPage = 1, initialLimit = 10, initialStartDate = null, initialEndDate = null,) => {
     const [sales, setSales] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(initialPage);
@@ -38,6 +38,16 @@ const useSales = (initialPage = 1, initialLimit = 10, initialStartDate = null, i
         [currentPage, limit, startDate, endDate]
     );
 
+
+    const getSaleWithId = useCallback(async (id) => {
+        try {
+            const response = await api.get(`/sales/${id}`);
+            return response.data
+        } catch (error) {
+            return false
+        }
+    }, [""])
+
     const updatePage = useCallback((page) => {
         if (page > 0 && page <= totalPages) {
             setCurrentPage(page);
@@ -60,6 +70,7 @@ const useSales = (initialPage = 1, initialLimit = 10, initialStartDate = null, i
         setLimit,
         setStartDate,
         setEndDate,
+        getSaleWithId
     }), [sales, totalPages, currentPage, loading, error, updatePage, fetchSales, startDate, endDate]);
 };
 

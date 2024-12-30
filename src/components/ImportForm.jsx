@@ -88,7 +88,7 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
         setSelectedProducts((prev) =>
             prev.map((p) =>
                 p.productId === productId
-                    ? { ...p, quantity: Math.max(1, parseInt(quantity) || 1) }
+                    ? { ...p, quantity: parseInt(quantity) }
                     : p
             )
         );
@@ -290,6 +290,7 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                                                     onChange={(e) =>
                                                         handleQuantityChange(product.productId, e.target.value)
                                                     }
+                                                    required
                                                     className="w-16 px-2 py-1 border rounded dark:bg-gray-600"
                                                 />
                                             </td>
@@ -315,7 +316,6 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                                                 <PriceInput
                                                     inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
                                                     selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
-                                                    min={product.incomePrice.cost}
                                                     costPrice={product.costPrice.cost}
                                                     onChange={(price, currency) =>
                                                         handlePriceChange(product.productId, price, currency, 'costPrice')

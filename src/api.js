@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getToken } from './utils/tokenUtils';
 
 // Atrof-muhitga qarab URL-ni tanlash
-const baseURL =
+export const baseURL =
     process.env.NODE_ENV === 'production'
         ? 'https://diotbakend-production.up.railway.app/api' // Production URL
         : 'http://localhost:5000/api'; // Local development URL

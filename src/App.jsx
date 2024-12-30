@@ -68,7 +68,7 @@ function Layout() {
         <div className={`${isDark ? 'dark bg-gray-900' : ''} min-h-screen`}>
             <Navbar />
             <main className="md:p-5 bg-gray-100 dark:bg-gray-900 ">
-                <div className="container">
+                <div className="container-custom">
                     <Outlet />
                 </div>
             </main>

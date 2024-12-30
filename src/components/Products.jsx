@@ -38,7 +38,7 @@ const Products = () => {
             </div>
 
             {/* Mahsulotlar kartochkalari */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {products.length ? <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map(product => (
                     <div key={product._id} className="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-lg rounded-lg p-6 hover:bg-gray-100 dark:hover:bg-gray-700">
                         <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
@@ -70,7 +70,7 @@ const Products = () => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> : <p className='text-red-500 text-center w-full'>Mahsulotlar qolmagan</p>}
 
             {/* Mahsulot qo'shish yoki tahrirlash uchun form */}
             {showDialog && (

@@ -3,13 +3,19 @@
 @tailwind utilities;
 
 
-.container {
+.container-custom {
     max-width: 1440px;
     margin: 0 auto;
 }
 
 
-
-body.dark{
+body{
+    z-index: 10;
+    position: relative;
+}
+body.dark {
     background-color: black;
 }
+
+
+

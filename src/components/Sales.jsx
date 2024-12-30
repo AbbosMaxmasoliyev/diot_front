@@ -7,6 +7,7 @@ import Payments from './payments';
 import api from '../api';
 import SaleDetailsPdf from './SalePdfDetail';
 import { ArrowLeftIcon, ArrowRightIcon, ExitFullScreenIcon, ResetIcon, UpdateIcon } from '@radix-ui/react-icons';
+import DownloadInvoice from './SalePdfDetail';
 
 const Sales = () => {
     const [editingSale, setEditingSale] = useState(null);
@@ -81,57 +82,58 @@ const Sales = () => {
                     <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
                         Sotuvlar
                     </h2>
-
-
-                    <div className="flex flex-col gap-4">
-                        {/* Toggle Button */}
+                    <div className="flex items-center gap-4">
                         <button
-                            onClick={() => setShowFilters(!showFilters)}
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
+                            onClick={() => setShowDialog(true)}
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700  text-sm lg:text-xl "
                         >
-                            {showFilters ? "Yopish" : "Filtr va Amal"}
+                            Yangi Sotuv
                         </button>
+                        <div className="flex flex-col gap-4">
+                            {/* Toggle Button */}
+                            <button
+                                onClick={() => setShowFilters(!showFilters)}
+                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
+                            >
+                                {showFilters ? "Yopish" : "Filtr va Amal"}
+                            </button>
 
-                        {/* Conditional Rendered Filters and Actions */}
-                        {showFilters && (
-                            <div className="flex flex-col z-10    items-end gap-4 absolute dark:bg-gray-800 bg-white  min-w-[290px] md:w-[450px] right-[0] md:right-0 top-0 p-6  rounded-lg">
-                                <button
-                                    onClick={() => setShowFilters(false)}
-                                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
-                                >
-                                    <ExitFullScreenIcon />
-                                </button>
-                                <input
-                                    type="date"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                    className="border p-2 rounded dark:bg-gray-700 dark:text-white  w-full"
-                                />
-                                <input
-                                    type="date"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                    className="border p-2 rounded dark:bg-gray-700 dark:text-white w-full "
-                                />
-                                <button
-                                    onClick={handleFilter}
-                                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl"
-                                >
-                                    Filtrlash
-                                </button>
-                                <div className="flex gap-5 w-full">
-                                    <button className='bg-green-500 text-white py-2 px-4 flex justify-center items-center rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl' onClick={resetFilter}>
-                                        <UpdateIcon />
-                                    </button>
+                            {/* Conditional Rendered Filters and Actions */}
+                            {showFilters && (
+                                <div className="flex flex-col z-10    items-end gap-4 absolute dark:bg-gray-800 bg-white  min-w-[290px] md:w-[450px] right-[0] md:right-0 top-0 p-6  rounded-lg">
                                     <button
-                                        onClick={() => setShowDialog(true)}
-                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl "
+                                        onClick={() => setShowFilters(false)}
+                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 text-sm lg:text-xl"
                                     >
-                                        Yangi Sotuv
+                                        <ExitFullScreenIcon />
                                     </button>
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="border p-2 rounded dark:bg-gray-700 dark:text-white  w-full"
+                                    />
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="border p-2 rounded dark:bg-gray-700 dark:text-white w-full "
+                                    />
+                                    <button
+                                        onClick={handleFilter}
+                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl"
+                                    >
+                                        Filtrlash
+                                    </button>
+                                    <div className="flex gap-5 w-full">
+                                        <button className='bg-green-500 text-white py-2 px-4 flex justify-center items-center rounded hover:bg-blue-600 dark:hover:bg-blue-700 w-full  text-sm lg:text-xl' onClick={resetFilter}>
+                                            <UpdateIcon />
+                                        </button>
+
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -184,7 +186,6 @@ const Sales = () => {
                                                 Tahrirlash
                                             </span>
                                         </button>
-                                        <SaleDetailsPdf sale={sale} />
                                         <button
                                             className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 flex items-center"
                                             onClick={() => deleteSale(sale._id)}
@@ -195,6 +196,7 @@ const Sales = () => {
                                             </span>
                                         </button>
                                     </div>
+                                    <DownloadInvoice sale={sale} />
                                 </div>
                             ))}
                         </div>

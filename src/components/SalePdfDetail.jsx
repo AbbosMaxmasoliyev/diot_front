@@ -1,107 +1,54 @@
-import React from 'react';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import { formatCurrency, formatPhoneNumber } from '../utils/converter';
-import Payments from './payments';
-import { FileIcon } from '@radix-ui/react-icons';
+import React, { useRef } from 'react';
+import { baseURL } from '../api';
+import html2pdf from 'html2pdf.js';
+import "./style.download.css"
+const DownloadInvoice = ({ sale }) => {
+    const handleDownload = async (size) => {
+        try {
+            // Send a GET request to the backend to get the HTML content
+            console.log();
 
-const SaleDetailsPdf = ({ sale }) => {
-    const generatePdf = () => {
-        console.log(sale);
+            const response = await fetch(`${baseURL.replace("/api", "")}/download/${sale._id}`);
 
-        // XP-58 uchun sahifa o'lchami: 58mm x cheksiz uzunlik
-        const initialPageHeight = 50; // Dastlabki uzunlik (mm)
-        const pageWidth = 50; // Sahifa kengligi (mm)
+            if (!response.ok) {
+                throw new Error('Failed to fetch the invoice');
+            }
 
-        // Ma'lumotlar uzunligi asosida sahifa balandligini hisoblash
-        const calculateDynamicHeight = () => {
-            let y = 10; // Boshlang'ich y koordinatasi
-            y += 8; // Title uchun joy
-            y += 20; // Mijoz ma'lumotlari uchun joy
-            y += sale.outgoings.length * 12; // Har bir mahsulot uchun joy (12mm har bir mahsulot)
-            y += 25; // Umumiy narx, chegirma va to'lov turi uchun joy
-            y += 10; // Qo'shimcha joy
-            return y > initialPageHeight ? y : initialPageHeight; // Minimum uzunlikni ta'minlash
-        };
+            // Get the HTML content as text
+            const htmlContent = await response.text();
+          
 
-        const pageHeight = calculateDynamicHeight();
+            // Use html2pdf.js to generate the PDF and preserve the design
+            const options = {
+                margin: 1,
+                
+                filename: `Sotuv-${sale.invoiceId}.pdf`,
+                html2canvas: {
+                    scale: 2, // For higher resolution rendering
+                    logging: true, // For debugging
+                    letterRendering: true, // For better font rendering
+                },
+                jsPDF: { unit: 'mm', format: size, orientation: 'portrait' },
+            };
 
-        const doc = new jsPDF({
-            unit: 'mm',
-            format: [pageWidth, pageHeight], // Dinamik uzunlik o'rnatish
-        });
+            html2pdf()
+                .from(htmlContent)
+                .set(options)
+                .save();
+            // Create a Blob with the HTML content
 
-        // Sahifa boshlang'ich y koordinatasi
-        let y = 10;
-        let x = 2
-
-        // Title
-        doc.setFontSize(12);
-        doc.text('Sales Receipt', x, y);
-        y += 8;
-
-        // Customer Info
-        doc.setFontSize(10);
-        doc.text(`Customer: ${sale.customerId.name}`, x, y);
-        y += 5;
-        doc.text(`Region: ${sale.customerId.region}`, x, y);
-        y += 5;
-        doc.text(`Phone: ${formatPhoneNumber(sale.customerId.phoneNumber)}`, x, y);
-        y += 8;
-
-        // Products Table
-        doc.setFontSize(10);
-        doc.text('Products:', x, y);
-        y += 5;
-
-        sale.outgoings.forEach((p, index) => {
-            doc.text(`${index + 1}. ${p.productId.name}`, x, y);
-            y += 4;
-            doc.text(`Qty: ${p.quantity} x ${formatCurrency(p.salePrice.cost, p.salePrice.currency)}`, 5, y);
-            y += 4;
-            doc.text(`Total: ${formatCurrency(p.quantity * p.salePrice.cost, p.salePrice.currency)}`, 5, y);
-            y += 6;
-        });
-
-        // Divider
-        doc.line(x, y, 53, y);
-        y += 5;
-
-        // Total Price
-        const uzsPrice = sale.totalPrice.find((p) => p.currency === 'UZS')?.cost || 0;
-        const usdPrice = sale.totalPrice.find((p) => p.currency === 'USD')?.cost || 0;
-        doc.text(`Total (UZS): ${formatCurrency(uzsPrice, "UZS")}`, x, y);
-        y += 5;
-        doc.text(`Total (USD): ${formatCurrency(usdPrice, "USD")}`, x, y);
-        y += 5;
-
-        // Discount
-        doc.text(`Discount Applied: ${sale.discountApplied}%`, x, y);
-        y += 5;
-
-        // Payment Method
-        doc.text(`Payment Method: ${sale.paymentMethod.toUpperCase()}`, x, y);
-        y += 8;
-
-        // Final Divider
-        doc.line(5, y, 53, y);
-        y += 5;
-
-        // Save or Print PDF
-        doc.autoPrint(); // Avtomatik chop qilish
-        doc.output('dataurlnewwindow'); // Yangi oynada ochish
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
     };
 
-
     return (
-        <button
-            onClick={generatePdf}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center"
-        >
-            <FileIcon />
-            <span className='hidden lg:inline text-sm'>Chop etish</span>
-        </button>
+        <div className='flex gap-4 relative'>
+            <button onClick={() => handleDownload("a4")}>Katta</button>
+            <button onClick={() => handleDownload([80, 200])}>Kichik</button>
+            
+        </div>
     );
 };
 
-export default SaleDetailsPdf;
+export default DownloadInvoice;

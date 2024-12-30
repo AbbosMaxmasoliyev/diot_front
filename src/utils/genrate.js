@@ -1,3 +1,5 @@
+
+
 const generateRandomData = () => {
     const generateRandomId = () => Math.random().toString(36).substr(2, 24);
     const generateRandomQuantity = () => Math.floor(Math.random() * 20) + 1; // 1 dan 20 gacha tasodifiy son
@@ -23,5 +25,7 @@ const generateRandomData = () => {
 
     return data;
 };
+
+
 
 export { generateRandomData }

@@ -1,0 +1,18 @@
+
+  @media print {
+    .print-only {
+      display: block; /* Printda ko'rsatiladi */
+    }
+  }
+
+  @media screen {
+    .print-only {
+      display: none; /* Ekranda ko'rsatilmaydi */
+    }
+  }
+
+  .line{
+    margin: 0 5px;
+  }
+
+  
