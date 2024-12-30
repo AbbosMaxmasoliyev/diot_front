@@ -16,6 +16,8 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import ProtectedRoute from './service/protected';
 import { Navbar } from './components/Navbar';
+import DownloadInvoice from './components/SalePdfDetail';
+import DownloadPdf from './components/DownloadPdf';
 
 // Loading fallback component
 function LoadingFallback() {
@@ -143,6 +145,12 @@ function App() {
                 },
             ],
         },
+        {
+
+
+            path: '/download/:saleId/:invoice', element: <DownloadPdf />
+
+        }
     ]);
 
     return (
