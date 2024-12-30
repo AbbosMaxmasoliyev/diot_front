@@ -14,6 +14,8 @@ const DownloadPdf = () => {
     const fetchContent = async () => {
         try {
             const response = await fetch(`${baseURL.replace('/api', '')}/download/${saleId}`);
+            console.log(response);
+            
             if (!response.ok) {
                 throw new Error('Failed to fetch the invoice');
             }
