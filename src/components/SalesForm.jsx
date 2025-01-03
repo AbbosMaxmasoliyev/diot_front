@@ -14,7 +14,19 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
     const { customers } = useCustomers();
     const { inventory: products } = useInventory();
     const totalRef = useRef(0);
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.code === "Escape") {
+                onClose();
+            }
+        };
 
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [onClose])
     useEffect(() => {
         if (order) {
             setCustomer(order.customerId?._id || '');
@@ -123,56 +135,66 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
 
     return (
         <>
-            <button className="w-5 h-5 fixed top-2 dark:text-gray-100" onClick={onClose}><XMarkIcon /></button>
-            <form onSubmit={handleSubmit} className="w-10/12 min-h-screen flex flex-col justify-start md:justify-between md:flex-row bg-gray-100 dark:bg-gray-800 p-4 rounded shadow-md gap-5">
-                <div className="mb-4 md:w-7/12">
+            <button className="fixed top-2 right-2 w-8 h-8 text-gray-900 dark:text-gray-100 z-10" onClick={onClose}>
+                <XMarkIcon />
+            </button>
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-6 p-4 bg-gray-100 dark:bg-gray-800 h-screen rounded-md shadow-md w-[90%] overflow-y-auto"
+            >
+                <div>
                     <InventorSearch onSelect={handleProductSelect} disabled={!!order} />
                     <p className="font-bold text-lg text-gray-900 dark:text-gray-200 mt-5 mb-3">Savatcha</p>
                     {selectedProducts.length ? (
-                        <div className="overflow-x-auto">
-                            <table className="table-auto w-full border-collapse border border-gray-300 dark:border-gray-700">
-                                <thead className="bg-gray-200 dark:bg-gray-800">
-                                    <tr>
-                                        <th className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-left text-gray-900 dark:text-gray-200">Nomi</th>
-                                        <th className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-left text-gray-900 dark:text-gray-200">Soni</th>
-                                        <th className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-left text-gray-900 dark:text-gray-200">Umumiy summasi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {selectedProducts.map((product) => (
-                                        <tr
-                                            key={product.productId}
-                                            className="bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 "
-                                        >
-                                            <td className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 text-sm md:text-lg truncate">
-                                                {product.name}
-                                            </td>
-                                            <td className="px-4 py-2 border border-gray-300 dark:border-gray-700">
-                                                <input
-                                                    type="number"
-                                                    value={product.quantity}
-                                                    max={product.totalQuantity}
-                                                    onChange={(e) => handleQuantityChange(product.productId, e.target.value)}
-                                                    disabled={!!order}
-                                                    className="w-32 px-2 py-1 border rounded bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
-                                                />
-                                            </td>
-                                            <td className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200">
+                        <div className="flex flex-col gap-3">
+                            <div className="md:flex hidden justify-between p-2 bg-gray-200 dark:bg-gray-700 rounded-md font-bold text-gray-900 dark:text-gray-200 ">
+                                <span className="flex-1">Nomi</span>
+                                <span className="flex-1">Soni</span>
+                                <span className="flex-1">Umumiy summa</span>
+                            </div>
+                            {selectedProducts.map((product) => (
+                                <div
+                                    key={product.productId}
+                                    className="flex flex-col md:flex-row gap-2  justify-between md:items-center items-start p-2 bg-white dark:bg-gray-700 rounded-md shadow text-gray-900 dark:text-gray-200"
+                                >
+                                    <span className="flex-1 flex gap-1 text-sm md:text-base  truncate">
+                                        <span className='md:hidden inline-block'>Nomi: </span>
+                                        {product.name}
+                                    </span>
+                                    <label htmlFor="quantity" className='flex-1 flex gap-1 items-center'>
 
-                                                {formatCurrency(order ? product.price : product.price.cost * Number(product?.quantity), order ? product.currency : product.price.currency)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            {console.log(order)}
+                                        <span className='md:hidden inline-block'>Soni: </span>
+                                        <input
+                                            type="number"
+                                            id='quantity'
+                                            value={product.quantity}
+                                            max={product.totalQuantity}
+                                            onChange={(e) => handleQuantityChange(product.productId, e.target.value)}
+                                            disabled={!!order}
+                                            className=" w-20 px-2 py-1 border rounded bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-gray-200"
+                                        />
+                                    </label>
+                                    <span className="flex-1 flex gap-1 text-sm md:text-base text-gray-900 dark:text-gray-200">
+                                        <span className='md:hidden inline-block'>Umumiy summasi: </span>
+
+                                        {formatCurrency(
+                                            order
+                                                ? product.price
+                                                : product.price.cost * Number(product?.quantity),
+                                            order ? product.currency : product.price.currency
+                                        )}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
                     ) : (
-                        <p className="font-semibold text-md text-gray-900 dark:text-gray-400">Iltimos mahsulotlarni tanlang</p>
+                        <p className="font-semibold text-md text-gray-900 dark:text-gray-400">
+                            Iltimos mahsulotlarni tanlang
+                        </p>
                     )}
                 </div>
-                <div className="flex flex-col md:w-4/12">
-                    <div className="mb-4">
+                <div className="flex flex-col gap-6">
+                    <div>
                         <label className="block font-bold mb-2 text-gray-900 dark:text-gray-200">Mijozni tanlang:</label>
                         <select
                             value={customer}
@@ -189,27 +211,27 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
                             ))}
                         </select>
                     </div>
-                    <div className="flex justify-between my-4 items-center">
-                        <div className="flex flex-col">
-                            <label htmlFor="discount" className='text-gray-900 dark:text-gray-200'>Chegirma</label>
-                            <input
-                                type="number"
-                                value={discountApplied}
-                                onChange={(e) => setDiscountApplied(Math.min(100, parseInt(e.target.value)))}
-                                disabled={!!order}
-                                id="discount"
-                                placeholder="Chegirma"
-                                className="w-full px-2 py-2 pr-4 border rounded focus:outline-none focus:ring focus:ring-blue-300 text-gray-900 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600"
-                            />
-                            <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200 mt-4">
-                                Umumiy (so'mda): {formatCurrency(order ? order.totalPrice[0].cost : totalPrice.UZS || 0, "UZS")}
-                            </p>
-                            <p className="font-bold md:text-lg text-sm text-gray-900 dark:text-gray-200 mt-4">
-                                Umumiy (dollarda): {formatCurrency(order ? order.totalPrice[1].cost : totalPrice.USD || 0, "USD")}
-                            </p>
-                        </div>
+                    <div>
+                        <label htmlFor="discount" className="text-gray-900 dark:text-gray-200">Chegirma</label>
+                        <input
+                            type="number"
+                            value={discountApplied}
+                            onChange={(e) => setDiscountApplied(Math.min(100, parseInt(e.target.value)))}
+                            disabled={!!order}
+                            id="discount"
+                            placeholder="Chegirma"
+                            className="w-full px-2 py-2 pr-4 border rounded focus:outline-none focus:ring focus:ring-blue-300 text-gray-900 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600"
+                        />
                     </div>
-                    <div className="mb-4">
+                    <div>
+                        <p className="font-bold text-sm md:text-lg text-gray-900 dark:text-gray-200">
+                            Umumiy (so'mda): {formatCurrency(order ? order.totalPrice[0].cost : totalPrice.UZS || 0, "UZS")}
+                        </p>
+                        <p className="font-bold text-sm md:text-lg text-gray-900 dark:text-gray-200">
+                            Umumiy (dollarda): {formatCurrency(order ? order.totalPrice[1].cost : totalPrice.USD || 0, "USD")}
+                        </p>
+                    </div>
+                    <div>
                         <label className="text-gray-900 dark:text-gray-200">To'lov turi:</label>
                         <select
                             value={paymentMethod}
@@ -235,6 +257,7 @@ const SalesForm = ({ order, onClose, refreshOrders }) => {
             </form>
         </>
     );
+
 };
 
 export default SalesForm;

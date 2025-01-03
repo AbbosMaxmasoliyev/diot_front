@@ -16,7 +16,19 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
     const [error, setError] = useState('');
     const { supplies } = useSuppliers();
     const { products } = useProducts();
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.code === "Escape") {
+                onClose();
+            }
+        };
 
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [onClose])
     useEffect(() => {
         if (importItem) {
             setSupplier(importItem.supplier?._id || '');
@@ -220,43 +232,38 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
 
     return (
         <div className="fixed inset-0 flex items-start justify-end bg-gray-900 bg-opacity-50 z-50">
-            <div className="relative min-h-screen w-11/12 max-w-4xl bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <button className="absolute top-4 right-4" onClick={onClose}>
-                    <XMarkIcon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+            <div className="relative md:w-[90%] sm:w-full  bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg overflow-y-auto h-full">
+                <button className="absolute top-4 right-4 z-10 w-5 " onClick={onClose}>
+                    <XMarkIcon className='text-white ' fontSize={24} />
                 </button>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                        {importItem ? 'Importni tahrirlash' : 'Yangi import'}
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                        Yangi import
                     </h2>
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex-1">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col">
                             <label className="block text-gray-900 dark:text-gray-200 font-semibold">
                                 Yetkazib beruvchi
                             </label>
                             <select
-                                value={supplier}
-                                onChange={(e) => setSupplier(e.target.value)}
-                                required
+                                id="supplier"
                                 className="w-full mt-2 px-3 py-2 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200"
+                                required
                             >
                                 <option value="">Tanlang</option>
-                                {supplies.map((s) => (
-                                    <option key={s._id} value={s._id}>
-                                        {s.name}
-                                    </option>
-                                ))}
+                                {/* Yetkazib beruvchilar ro'yxati */}
                             </select>
                         </div>
-                        <div className="flex-1">
+                        <div className="flex flex-col">
                             <label className="block text-gray-900 dark:text-gray-200 font-semibold">
                                 Qo'shimcha xarajatlar
                             </label>
                             <div className="mt-2">
                                 <PriceInput
+                                    containerClass='flex-1 w-full '
                                     placeholder="Qo'shimcha harajatlar"
-                                    inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
-                                    selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                    inputClass="w-full px-2 py-1 border rounded dark:bg-gray-600"
+                                    selectClass="w-full px-2 py-1 border rounded dark:bg-gray-600"
                                     onChange={(price, currency) => {
                                         setAdditionalCosts(price);
                                         setCurrencyCost(currency);
@@ -267,90 +274,97 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                         </div>
                     </div>
                     <ProductSearch onSelect={handleProductSelect} />
-                    <div className=''>
+                    <div className="mt-4 text-gray-900 dark:text-gray-200">
                         <h3 className="font-bold text-gray-900 dark:text-gray-200">Tanlangan mahsulotlar</h3>
                         {selectedProducts.length ? (
-                            <table className="w-full mt-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200">
-                                <thead>
-                                    <tr className="bg-gray-200 dark:bg-gray-800">
-                                        <th className="px-4 py-2 text-left">Nomi</th>
-                                        <th className="px-4 py-2 text-left">Soni</th>
-                                        <th className="px-4 py-2 text-left">Kirish narxi</th>
-                                        <th className="px-4 py-2 text-left">Sotuv narxi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <div id="product-list" className="flex flex-col gap-2 mt-2">
+                                <div className="sm:flex justify-between bg-gray-200 dark:bg-gray-800 p-2 rounded hidden">
+                                    <span className="flex-1 w-full  text-left font-semibold">Nomi</span>
+                                    <span className="flex-1 w-full  text-left font-semibold">Soni</span>
+                                    <span className="flex-[2]   text-center font-semibold">Narxlar</span>
+                                    <span className="flex-1 w-full  text-center font-semibold">Sotuv narxi</span>
+                                </div>
+                                <div className="flex flex-col gap-2">
                                     {selectedProducts.map((product) => (
-                                        <tr key={product.productId} className="bg-white dark:bg-gray-700">
-                                            <td className="px-4 py-2">{product.name}</td>
-                                            <td className="px-4 py-2">
-                                                <input
-                                                    type="number"
-                                                    value={product.quantity}
-                                                    onChange={(e) =>
-                                                        handleQuantityChange(product.productId, e.target.value)
-                                                    }
-                                                    required
-                                                    className="w-16 px-2 py-1 border rounded dark:bg-gray-600"
-                                                />
-                                            </td>
-                                            <td className="px-4 py-2">
-                                                <PriceInput
-                                                    inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
-                                                    selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
-
-                                                    onChange={(price, currency) =>
-                                                        handlePriceChange(product.productId, price, currency, 'incomePrice')
-                                                    }
-                                                    defaultCurrency={product.incomePrice.currency}
-                                                    placeholder="Kirim narxi"
-                                                />
-                                            </td>
-                                            <td className="px-4 py-2">
-                                                {
-                                                    (() => {
-                                                        console.log(product)
-                                                    })()
-
+                                        <div
+                                            key={product.productId}
+                                            className="flex flex-col sm:flex-row justify-between sm:items-center bg-white dark:bg-gray-700 p-2 rounded shadow gap-2"
+                                        >
+                                            <div className="flex-1 w-full  text-left flex gap-1"><span className='sm:hidden inline-block'>Nomi: </span>{product.name}</div>
+                                            <label htmlFor="quantity" className='sm:hidden inline-block'>
+                                                <span>Soni: </span>
+                                            </label>
+                                            <input
+                                                type="number"
+                                                className="flex-1 w-full  px-2 py-1 border rounded dark:bg-gray-600"
+                                                value={product.quantity}
+                                                id='quantity'
+                                                onChange={(e) =>
+                                                    handleQuantityChange(product.productId, e.target.value)
                                                 }
-                                                <PriceInput
-                                                    inputClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
-                                                    selectClass="w-20 px-2 py-1 border rounded dark:bg-gray-600"
-                                                    costPrice={product.costPrice.cost}
-                                                    onChange={(price, currency) =>
-                                                        handlePriceChange(product.productId, price, currency, 'costPrice')
-                                                    }
-                                                    defaultCurrency={product.costPrice.currency}
-                                                    placeholder="Sotish narxi"
-                                                />
-                                            </td>
-                                            <td className="px-4 py-2">
-                                                {formatCurrency(product.incomePrice.cost * product.quantity, product.incomePrice.currency)}
-                                            </td>
-                                        </tr>
+                                                required
+                                            />
+                                            <label className='sm:hidden inline-block'>
+                                                <span>Kirish narxi: </span>
+                                            </label>
+                                            <PriceInput
+                                                containerClass='flex-1 w-full '
+                                                inputClass="w-full  sm:w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                                selectClass="w-full sm:w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                                onChange={(price, currency) =>
+                                                    handlePriceChange(product.productId, price, currency, 'incomePrice')
+                                                }
+                                                defaultCurrency={product.incomePrice.currency}
+                                                placeholder="Kirim narxi"
+                                            />
+                                            <label className='sm:hidden inline-block'>
+                                                <span>Sotilish narxi: </span>
+                                            </label>
+                                            <PriceInput
+                                                containerClass='flex-1 w-full '
+                                                inputClass="w-full sm:w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                                selectClass="w-full sm:w-20 px-2 py-1 border rounded dark:bg-gray-600"
+                                                costPrice={product.costPrice.cost}
+                                                onChange={(price, currency) =>
+                                                    handlePriceChange(product.productId, price, currency, 'costPrice')
+                                                }
+                                                defaultCurrency={product.costPrice.currency}
+                                                placeholder="Sotish narxi"
+                                            />
+                                            <label className='sm:hidden inline-block'>
+                                                <span>Umumiy sotilish summasi: </span>
+                                            </label>
+                                            <span className="flex-1 w-full  md:text-center">
+                                                {formatCurrency(
+                                                    product.incomePrice.cost * product.quantity,
+                                                    product.incomePrice.currency
+                                                )}
+                                            </span>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
+                                </div>
+                            </div>
                         ) : (
                             <p className="text-gray-700 dark:text-gray-300">Mahsulotlar tanlanmagan.</p>
                         )}
                     </div>
-                    <div className="flex justify-between items-start flex-col">
-                        <div className="flex flex-col">
-                            <p className="text-gray-800 dark:text-gray-200">
-                                Kirim holati:
-                            </p>
-                            <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>So'mda kirayotgan mahsulotlari kirimi: <span className='font-bold'>{formatCurrency(totalCostIncome.UZS, "UZS")}</span></p>
-                            <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>Dollarda kirayotgan mahsulotlar uchun: <span className='font-bold'>{formatCurrency(totalCostIncome.USD, "USD")}</span></p>
-                            <p className='md:text-lg text-sm  text-gray-900 dark:text-gray-200 md:flex-col flex-row'>Qo'shimcha harajatlar: <span className='font-bold'>{formatCurrency(additionalCosts, currencyCost)}</span></p>
-                        </div>
+                    <div className="flex flex-col gap-4">
+                        <p className="text-gray-800 dark:text-gray-200">Kirim holati:</p>
+                        <p className="text-sm text-gray-900 dark:text-gray-200">
+                            So'mda kirayotgan mahsulotlar: <span className="font-bold">{formatCurrency(totalCostIncome.UZS, "UZS")}</span>
+                        </p>
+                        <p className="text-sm text-gray-900 dark:text-gray-200">
+                            Dollarda kirayotgan mahsulotlar: <span className="font-bold">{formatCurrency(totalCostIncome.USD, "USD")}</span>
+                        </p>
+                        <p className="text-sm text-gray-900 dark:text-gray-200">
+                            Qo'shimcha xarajatlar: <span className="font-bold">{formatCurrency(additionalCosts, currencyCost)}</span>
+                        </p>
                         <p className="text-lg font-bold text-gray-900 dark:text-gray-200">
                             Sotuv holati: {formatCurrency(totalCostSale.UZS, "UZS")} + {formatCurrency(totalCostSale.USD, "USD")}
-
                         </p>
                         <button
                             type="submit"
-                            className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500"
+                            className="w-full sm:w-max px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500"
                         >
                             {importItem ? 'Yangilash' : 'Saqlash'}
                         </button>
@@ -359,6 +373,7 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
             </div>
         </div>
     );
+
 };
 
 export default ImportForm;

@@ -7,6 +7,7 @@ const PriceInput = ({
     placeholder = "Narx",
     inputClass = "",
     selectClass = "",
+    containerClass = "",
     min,
     costPrice,
 
@@ -42,7 +43,7 @@ const PriceInput = ({
     }, [handleParentUpdate]);
 
     return (
-        <div className="flex items-center gap-2">
+        <div className={`${containerClass} flex items-center gap-2`}>
             <input
                 type="number"
                 ref={inputRef}

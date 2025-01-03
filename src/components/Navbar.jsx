@@ -110,9 +110,9 @@ export function Navbar() {
                             <Link to="/customers" className="block mb-4">
                                 Mijozlar
                             </Link>
-                            <Link to="/orders" className="block mb-4">
+                            {/* <Link to="/orders" className="block mb-4">
                                 Buyurtmalar
-                            </Link>
+                            </Link> */}
                             <Link to="/inventory" className="block mb-4">
                                 Ombor
                             </Link>
