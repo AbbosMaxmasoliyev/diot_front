@@ -251,7 +251,9 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                                 required
                             >
                                 <option value="">Tanlang</option>
-                                {/* Yetkazib beruvchilar ro'yxati */}
+                                {
+                                    supplies.map(supplier => <option value={supplier._id}>{supplier.name}</option>)
+                                }
                             </select>
                         </div>
                         <div className="flex flex-col">
