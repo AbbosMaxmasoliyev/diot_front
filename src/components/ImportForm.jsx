@@ -225,8 +225,8 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
             resetForm();
             onClose();
         } catch (err) {
-            setError("Ma'lumotni saqlashda xato yuz berdi!");
             console.error(err);
+            setError("Ma'lumotni saqlashda xato yuz berdi!");
         }
     };
 
@@ -249,6 +249,7 @@ const ImportForm = ({ importItem, onClose, refreshImports }) => {
                                 id="supplier"
                                 className="w-full mt-2 px-3 py-2 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200"
                                 required
+                                onChange={(e)=> setSupplier(e.target.value)}
                             >
                                 <option value="">Tanlang</option>
                                 {

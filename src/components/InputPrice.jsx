@@ -52,6 +52,7 @@ const PriceInput = ({
                 onChange={handlePriceChange}
                 className={`${inputClass} w-32 border rounded bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-200`}
                 placeholder={placeholder}
+                step={0.001}
             />
             <select
                 value={currency}
