@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../diot_lampochka_shop_mobile"
+		},
+		{
+			"path": "../DiotMobile"
 		}
 	],
 	"settings": {}

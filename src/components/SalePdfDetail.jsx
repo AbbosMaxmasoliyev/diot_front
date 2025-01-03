@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const DownloadInvoice = ({ sale }) => {
     const navigate = useNavigate()
     const handleDownload = async (size) => {
-        navigate(`/download/${sale._id}/${sale.invoiceId}/${size}`)
+        window.open(`/download/${sale._id}/${sale.invoiceId}/${size}`)
     };
 
     return (
