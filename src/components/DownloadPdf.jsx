@@ -4,7 +4,7 @@ import html2pdf from 'html2pdf.js';
 import { baseURL } from '../api';
 
 const DownloadPdf = () => {
-    const { saleId, invoice } = useParams();
+    const { saleId, invoice, size } = useParams();
     const navigate = useNavigate();
     const contentRef = useRef(null); // Ref for the content to measure height
     const [contentHeight, setContentHeight] = useState(0); // State to store content height
@@ -15,7 +15,7 @@ const DownloadPdf = () => {
         try {
             const response = await fetch(`${baseURL.replace('/api', '')}/download/${saleId}`);
             console.log(response);
-            
+
             if (!response.ok) {
                 throw new Error('Failed to fetch the invoice');
             }
@@ -42,7 +42,7 @@ const DownloadPdf = () => {
                 },
                 jsPDF: {
                     unit: 'mm',
-                    format: [80, ((contentHeight + 256) * 0.264583)], // Convert height to mm
+                    format: size == "auto" ? [80, ((contentHeight + 256) * 0.264583)] : "a4", // Convert height to mm
                     orientation: 'portrait',
                 },
             };
@@ -54,12 +54,12 @@ const DownloadPdf = () => {
     // Handle navigation or window close
     const handleClose = () => {
         console.log(window.history.length);
-        
-        if (window.history.length > 1) {
-            navigate(-1); // Go back if there's history
-        } else {
-            window.close(); // Close the window if no history
-        }
+
+        // if (window.history.length > 1) {
+        //     navigate(-1); // Go back if there's history
+        // } else {
+        //     window.close(); // Close the window if no history
+        // }
     };
 
     useEffect(() => {

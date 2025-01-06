@@ -195,8 +195,8 @@ const Sales = () => {
                                                 O'chirish
                                             </span>
                                         </button>
-                                    </div>
                                     <DownloadInvoice sale={sale} />
+                                    </div>
                                 </div>
                             ))}
                         </div>
