@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { setToken } from '../utils/tokenUtils';
 import api from '../api';
 
 function Login() {
+    const loading = useLoaderData()
+    console.log(loading);
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);

@@ -21,6 +21,8 @@ import DownloadPdf from './components/DownloadPdf';
 
 // Loading fallback component
 function LoadingFallback() {
+    console.log("Salom");
+
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-800">
             <p className="text-gray-800 dark:text-gray-200 text-lg">Loading...</p>
@@ -84,8 +86,20 @@ function App() {
         {
             element: <Layout />,
             errorElement: <ErrorFallback />,
+            loader: async () => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        console.log("salom");
+                        
+                        resolve(true); // Simulated delay
+                    }, 2000);
+                });
+            },
             children: [
-                { path: '/login', element: <Login /> },
+                {
+                    path: '/login',
+                    element: <Login />,
+                },
                 { path: '/signup', element: <SignUp /> },
                 {
                     path: '/',
@@ -155,7 +169,7 @@ function App() {
 
     return (
         <ThemeProvider>
-            <Suspense fallback={<LoadingFallback />}>
+            <Suspense fallback={<LoadingFallback />} >
                 <RouterProvider router={router} />
             </Suspense>
         </ThemeProvider>
